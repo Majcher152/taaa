@@ -41,7 +41,7 @@ public class PrzypomnijHaslo {
 	 * asd
 	 * a
 	 * aa
-	 * a
+	 * aaaaaa
 	 * a
 	 * a
 	 * 
