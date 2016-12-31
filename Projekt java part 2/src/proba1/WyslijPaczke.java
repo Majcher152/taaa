@@ -1,11 +1,10 @@
 package proba1;
 
 import java.awt.EventQueue;
-
 import javax.swing.JFrame;
 import javax.swing.SpringLayout;
-
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollBar;
 import javax.swing.JTextField;
@@ -18,16 +17,28 @@ import javax.swing.JScrollPane;
 import java.awt.event.MouseWheelListener;
 import java.awt.event.MouseWheelEvent;
 import javax.swing.ButtonGroup;
+import java.awt.Font;
+import javax.swing.GroupLayout;
+import javax.swing.GroupLayout.Alignment;
+import javax.swing.LayoutStyle.ComponentPlacement;
 
 public class WyslijPaczke {
 
 	private JFrame frame;
-	private JPanel panel;
-	private JTextField textField;
-	private JTextField textField_1;
-	private JTextField textField_2;
-	private JTextField textField_3;
+	private JTextField textField_waga;
 	private final ButtonGroup buttonGroup = new ButtonGroup();
+	private final ButtonGroup buttonGroup_1 = new ButtonGroup();
+	private JTextField textField_miasto_ad;
+	private JTextField textField_adres_ad;
+	private JTextField textField_kod_ad;
+	private JTextField textField_miasto_na;
+	private JTextField textField_adres_na;
+	private JTextField textField_koszt;
+	private JButton btnZamwKuriera;
+	private JButton btnPowrot;
+	private JTextField textField_kod_ad1;
+	private JTextField textField_kod_na;
+	private JTextField textField_kod_na1;
 
 	/**
 	 * Create the application.
@@ -51,156 +62,330 @@ public class WyslijPaczke {
 	private void initialize() {
 		MyActionListener myAction = new MyActionListener();
 		frame = new JFrame();
-		frame.setResizable(false);
-		panel = new JPanel();
-		panel.setAutoscrolls(true);
-		frame.setBounds(100, 100, 595, 600);
+		frame.setBounds(100, 100, 500, 547);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		SpringLayout springLayout = new SpringLayout();
-		panel.setLayout(springLayout);
-		
-		JLabel lblWaga = new JLabel("Waga:");
-		springLayout.putConstraint(SpringLayout.NORTH, lblWaga, 13, SpringLayout.NORTH, frame.getContentPane());
-		springLayout.putConstraint(SpringLayout.WEST, lblWaga, 10, SpringLayout.WEST, frame.getContentPane());
-		panel.add(lblWaga);
-		
-		textField = new JTextField();
-		springLayout.putConstraint(SpringLayout.NORTH, textField, -3, SpringLayout.NORTH, lblWaga);
-		springLayout.putConstraint(SpringLayout.WEST, textField, 44, SpringLayout.EAST, lblWaga);
-		panel.add(textField);
-		textField.setColumns(10);
-		
-	
-		JLabel lblSzklo = new JLabel("Szklo:");
-		springLayout.putConstraint(SpringLayout.NORTH, lblSzklo, 14, SpringLayout.SOUTH, lblWaga);
-		springLayout.putConstraint(SpringLayout.WEST, lblSzklo, 0, SpringLayout.WEST, lblWaga);
-		panel.add(lblSzklo);
-		
-		JCheckBox chckbxTak = new JCheckBox("Tak");
-		springLayout.putConstraint(SpringLayout.NORTH, chckbxTak, -4, SpringLayout.NORTH, lblSzklo);
-		springLayout.putConstraint(SpringLayout.WEST, chckbxTak, 0, SpringLayout.WEST, textField);
-		panel.add(chckbxTak);
-		
-		JLabel lblRodzaj = new JLabel("Rodzaj:");
-		springLayout.putConstraint(SpringLayout.NORTH, lblRodzaj, 14, SpringLayout.SOUTH, lblSzklo);
-		springLayout.putConstraint(SpringLayout.WEST, lblRodzaj, 0, SpringLayout.WEST, lblWaga);
-		panel.add(lblRodzaj);
-		
-		JRadioButton rdbtnList = new JRadioButton("List");
-		buttonGroup.add(rdbtnList);
-		springLayout.putConstraint(SpringLayout.NORTH, rdbtnList, -4, SpringLayout.NORTH, lblRodzaj);
-		springLayout.putConstraint(SpringLayout.WEST, rdbtnList, 0, SpringLayout.WEST, textField);
-		panel.add(rdbtnList);
-		
-		JRadioButton rdbtnPaczka = new JRadioButton("Paczka");
-		buttonGroup.add(rdbtnPaczka);
-		springLayout.putConstraint(SpringLayout.NORTH, rdbtnPaczka, -4, SpringLayout.NORTH, lblRodzaj);
-		springLayout.putConstraint(SpringLayout.WEST, rdbtnPaczka, 6, SpringLayout.EAST, rdbtnList);
-		panel.add(rdbtnPaczka);
-		
-		JRadioButton rdbtnCosInnego = new JRadioButton("Cos innego");
-		buttonGroup.add(rdbtnCosInnego);
-		springLayout.putConstraint(SpringLayout.NORTH, rdbtnCosInnego, -4, SpringLayout.NORTH, lblRodzaj);
-		springLayout.putConstraint(SpringLayout.WEST, rdbtnCosInnego, 6, SpringLayout.EAST, rdbtnPaczka);
-		panel.add(rdbtnCosInnego);
-		
-		JLabel lblKg = new JLabel("kg");
-		springLayout.putConstraint(SpringLayout.NORTH, lblKg, 0, SpringLayout.NORTH, lblWaga);
-		springLayout.putConstraint(SpringLayout.WEST, lblKg, 6, SpringLayout.EAST, textField);
-		panel.add(lblKg);
-		
-		JButton btnPowrot = new JButton("Powrot");
-		springLayout.putConstraint(SpringLayout.WEST, btnPowrot, 0, SpringLayout.WEST, lblWaga);
-		springLayout.putConstraint(SpringLayout.SOUTH, btnPowrot, -10, SpringLayout.SOUTH, frame.getContentPane());
-		panel.add(btnPowrot);
-		btnPowrot.addActionListener(myAction);
-		
-		JButton btnWyslijZamowienie = new JButton("Wyslij zamowienie");
-		btnWyslijZamowienie.addActionListener(myAction);
 
-		springLayout.putConstraint(SpringLayout.EAST, textField, 0, SpringLayout.EAST, btnWyslijZamowienie);
-		springLayout.putConstraint(SpringLayout.WEST, btnWyslijZamowienie, 10, SpringLayout.WEST, frame.getContentPane());
-		springLayout.putConstraint(SpringLayout.SOUTH, btnWyslijZamowienie, -6, SpringLayout.NORTH, btnPowrot);
-		panel.add(btnWyslijZamowienie);
-		
+		JLabel lblWaga = new JLabel("Waga:");
+
+		textField_waga = new JTextField();
+		textField_waga.setToolTipText("Podaj wage swojej przesy\u0142ki w kilogramach");
+		textField_waga.setColumns(10);
+
+		JLabel lblKg = new JLabel("kg");
+		JLabel lblSzklo = new JLabel("Szklo:");
+		JCheckBox chckbxTak = new JCheckBox("Tak");
+		JLabel lblRodzaj = new JLabel("Rodzaj:");
+
+		JRadioButton rdbtnList = new JRadioButton("Mala przesylka");
+		buttonGroup.add(rdbtnList);
+		JRadioButton rdbtnPaczka = new JRadioButton("Srednia przesylka");
+		buttonGroup.add(rdbtnPaczka);
+		JRadioButton rdbtnCosInnego = new JRadioButton("Duza przesylka");
+		rdbtnCosInnego.setSelected(true);
+		buttonGroup.add(rdbtnCosInnego);
+
+		JLabel lblPrzesyka = new JLabel("Przesylka:");
+
+		JRadioButton rdbtnEkspresowa = new JRadioButton("ekspresowa");
+		rdbtnEkspresowa.setSelected(true);
+		buttonGroup_1.add(rdbtnEkspresowa);
+		JRadioButton rdbtnZwyka = new JRadioButton("zwykla");
+		buttonGroup_1.add(rdbtnZwyka);
+
 		JLabel lblDaneAdresata = new JLabel("Dane adresata:");
-		panel.add(lblDaneAdresata);
-		
-		JLabel lblDaneNadawcy = new JLabel("Dane nadawcy:");
-		springLayout.putConstraint(SpringLayout.WEST, lblDaneAdresata, 0, SpringLayout.WEST, lblDaneNadawcy);
-		springLayout.putConstraint(SpringLayout.WEST, lblDaneNadawcy, 156, SpringLayout.WEST, frame.getContentPane());
-		panel.add(lblDaneNadawcy);
-		
 		JLabel lblMiasto = new JLabel("Miasto:");
-		springLayout.putConstraint(SpringLayout.NORTH, lblMiasto, 43, SpringLayout.SOUTH, lblRodzaj);
-		springLayout.putConstraint(SpringLayout.WEST, lblMiasto, 0, SpringLayout.WEST, lblWaga);
-		panel.add(lblMiasto);
-		
-		textField_1 = new JTextField();
-		springLayout.putConstraint(SpringLayout.WEST, textField_1, 52, SpringLayout.EAST, lblMiasto);
-		springLayout.putConstraint(SpringLayout.EAST, textField_1, -168, SpringLayout.EAST, frame.getContentPane());
-		springLayout.putConstraint(SpringLayout.SOUTH, lblDaneAdresata, -6, SpringLayout.NORTH, textField_1);
-		springLayout.putConstraint(SpringLayout.NORTH, textField_1, -3, SpringLayout.NORTH, lblMiasto);
-		panel.add(textField_1);
-		//textField_1.setColumns(10);
-		
-		JLabel lblUlica = new JLabel("Ulica:");
-		springLayout.putConstraint(SpringLayout.NORTH, lblUlica, 15, SpringLayout.SOUTH, lblMiasto);
-		springLayout.putConstraint(SpringLayout.WEST, lblUlica, 10, SpringLayout.WEST, frame.getContentPane());
-		panel.add(lblUlica);
-		
-		textField_2 = new JTextField();
-		springLayout.putConstraint(SpringLayout.WEST, textField_2, 61, SpringLayout.EAST, lblUlica);
-		springLayout.putConstraint(SpringLayout.EAST, textField_2, 0, SpringLayout.EAST, textField_1);
-		springLayout.putConstraint(SpringLayout.NORTH, textField_2, -3, SpringLayout.NORTH, lblUlica);
-		panel.add(textField_2);
-		textField_2.setColumns(10);
-		
+		textField_miasto_ad = new JTextField();
+		textField_miasto_ad.setColumns(10);
+		JLabel lblUlica = new JLabel("Adres:");
+		textField_adres_ad = new JTextField();
+		textField_adres_ad.setColumns(10);
+		JLabel lblNewLabel = new JLabel("Kod pocztowy:");
+		textField_kod_ad = new JTextField("", 2);
+		textField_kod_ad.setColumns(2);
+		JLabel label = new JLabel("-");
+		textField_kod_ad1 = new JTextField("", 3);
+		textField_kod_ad1.setColumns(3);
+
+		JLabel lblDaneNadawcy = new JLabel("Dane nadawcy:");
+		JLabel lblMiasto_1 = new JLabel("Miasto:");
+		JLabel lblUlica_1 = new JLabel("Adres:");
 		JLabel lblKodPocztowy = new JLabel("Kod pocztowy:");
-		springLayout.putConstraint(SpringLayout.NORTH, lblKodPocztowy, 16, SpringLayout.SOUTH, lblUlica);
-		springLayout.putConstraint(SpringLayout.WEST, lblKodPocztowy, 0, SpringLayout.WEST, lblWaga);
-		panel.add(lblKodPocztowy);
-		
-		textField_3 = new JTextField();
-		springLayout.putConstraint(SpringLayout.NORTH, lblDaneNadawcy, 10, SpringLayout.SOUTH, textField_3);
-		springLayout.putConstraint(SpringLayout.NORTH, textField_3, -3, SpringLayout.NORTH, lblKodPocztowy);
-		springLayout.putConstraint(SpringLayout.WEST, textField_3, 0, SpringLayout.WEST, textField_1);
-		springLayout.putConstraint(SpringLayout.EAST, textField_3, 0, SpringLayout.EAST, textField_1);
-		panel.add(textField_3);
-		textField_3.setColumns(10);
-		
-		JLabel label = new JLabel("Miasto:");
-		springLayout.putConstraint(SpringLayout.NORTH, label, 36, SpringLayout.SOUTH, lblKodPocztowy);
-		springLayout.putConstraint(SpringLayout.WEST, label, 0, SpringLayout.WEST, lblWaga);
-		panel.add(label);
-		
-		JLabel label_1 = new JLabel("Ulica:");
-		springLayout.putConstraint(SpringLayout.NORTH, label_1, 0, SpringLayout.NORTH, lblKodPocztowy);
-		springLayout.putConstraint(SpringLayout.WEST, label_1, 66, SpringLayout.EAST, textField_3);
-		panel.add(label_1); 
-		
-		JScrollPane jsp = new JScrollPane(panel,JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-		frame.getContentPane().add(jsp);
-		
-		
+		textField_miasto_na = new JTextField();
+		textField_miasto_na.setColumns(10);
+		textField_adres_na = new JTextField();
+		textField_adres_na.setColumns(10);
+
+		JLabel lblKoszt = new JLabel("Koszt:");
+		lblKoszt.setFont(new Font("Tahoma", Font.BOLD, 14));
+		textField_koszt = new JTextField();
+		textField_koszt.setEditable(false);
+		textField_koszt.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		textField_koszt.setColumns(10);
+		JLabel lblZ = new JLabel("z\u0142");
+		lblZ.setFont(new Font("Tahoma", Font.PLAIN, 14));
+
+		btnZamwKuriera = new JButton("Zamow kuriera");
+
+		btnPowrot = new JButton("Powrot");
+
+		textField_kod_na = new JTextField();
+		textField_kod_na.setColumns(10);
+
+		JLabel label_1 = new JLabel("-");
+
+		textField_kod_na1 = new JTextField();
+		textField_kod_na1.setColumns(10);
+		GroupLayout groupLayout = new GroupLayout(frame.getContentPane());
+		groupLayout
+				.setHorizontalGroup(groupLayout.createParallelGroup(Alignment.LEADING)
+						.addGroup(groupLayout
+								.createSequentialGroup()
+								.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
+										.addGroup(groupLayout
+												.createSequentialGroup().addGap(201).addComponent(lblDaneAdresata))
+										.addGroup(groupLayout.createSequentialGroup().addGap(204)
+												.addComponent(lblDaneNadawcy))
+										.addGroup(groupLayout.createSequentialGroup()
+												.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
+														.addGroup(groupLayout.createSequentialGroup().addGap(10)
+																.addComponent(lblMiasto))
+														.addGroup(groupLayout.createSequentialGroup().addContainerGap()
+																.addComponent(lblUlica))
+														.addGroup(groupLayout.createSequentialGroup().addContainerGap()
+																.addComponent(lblNewLabel)))
+												.addGap(22)
+												.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
+														.addComponent(textField_adres_ad, GroupLayout.PREFERRED_SIZE,
+																201, GroupLayout.PREFERRED_SIZE)
+														.addComponent(textField_miasto_ad, GroupLayout.PREFERRED_SIZE,
+																201, GroupLayout.PREFERRED_SIZE)
+														.addGroup(groupLayout.createSequentialGroup()
+																.addComponent(textField_kod_ad,
+																		GroupLayout.PREFERRED_SIZE, 20,
+																		GroupLayout.PREFERRED_SIZE)
+																.addPreferredGap(ComponentPlacement.RELATED)
+																.addComponent(label)
+																.addPreferredGap(ComponentPlacement.RELATED)
+																.addComponent(textField_kod_ad1,
+																		GroupLayout.PREFERRED_SIZE, 26,
+																		GroupLayout.PREFERRED_SIZE))))
+										.addGroup(groupLayout.createSequentialGroup().addGap(10)
+												.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
+														.addComponent(lblUlica_1).addComponent(lblKodPocztowy)
+														.addComponent(lblMiasto_1))
+												.addGap(22)
+												.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
+														.addComponent(textField_adres_na, GroupLayout.PREFERRED_SIZE,
+																201, GroupLayout.PREFERRED_SIZE)
+														.addComponent(textField_miasto_na, GroupLayout.PREFERRED_SIZE,
+																201, GroupLayout.PREFERRED_SIZE)
+														.addGroup(groupLayout.createSequentialGroup()
+																.addComponent(lblKoszt).addGap(18)
+																.addComponent(textField_koszt,
+																		GroupLayout.PREFERRED_SIZE, 43,
+																		GroupLayout.PREFERRED_SIZE)
+																.addPreferredGap(ComponentPlacement.RELATED)
+																.addComponent(lblZ))
+														.addGroup(groupLayout.createSequentialGroup()
+																.addComponent(textField_kod_na,
+																		GroupLayout.PREFERRED_SIZE, 20,
+																		GroupLayout.PREFERRED_SIZE)
+																.addPreferredGap(ComponentPlacement.RELATED)
+																.addComponent(label_1)
+																.addPreferredGap(ComponentPlacement.RELATED)
+																.addComponent(textField_kod_na1,
+																		GroupLayout.PREFERRED_SIZE, 26,
+																		GroupLayout.PREFERRED_SIZE))))
+										.addGroup(groupLayout.createSequentialGroup().addContainerGap()
+												.addComponent(btnZamwKuriera))
+										.addGroup(groupLayout.createSequentialGroup()
+												.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
+														.addGroup(groupLayout.createSequentialGroup().addGap(10)
+																.addComponent(lblPrzesyka))
+														.addGroup(groupLayout.createSequentialGroup().addContainerGap()
+																.addComponent(lblWaga))
+														.addGroup(groupLayout.createSequentialGroup().addContainerGap()
+																.addComponent(lblSzklo))
+														.addGroup(groupLayout.createSequentialGroup().addContainerGap()
+																.addComponent(lblRodzaj)))
+												.addGap(44)
+												.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
+														.addComponent(chckbxTak)
+														.addGroup(groupLayout.createSequentialGroup()
+																.addComponent(textField_waga,
+																		GroupLayout.PREFERRED_SIZE, 43,
+																		GroupLayout.PREFERRED_SIZE)
+																.addPreferredGap(ComponentPlacement.RELATED)
+																.addComponent(lblKg))
+														.addGroup(groupLayout.createSequentialGroup()
+																.addPreferredGap(ComponentPlacement.RELATED)
+																.addComponent(rdbtnEkspresowa).addGap(18)
+																.addComponent(rdbtnZwyka))
+														.addGroup(groupLayout.createParallelGroup(Alignment.TRAILING)
+																.addComponent(btnPowrot).addGroup(groupLayout
+																		.createSequentialGroup().addComponent(rdbtnList)
+																		.addGap(6).addComponent(rdbtnPaczka).addGap(6)
+																		.addComponent(rdbtnCosInnego))))))
+								.addContainerGap(68, Short.MAX_VALUE)));
+		groupLayout.setVerticalGroup(groupLayout.createParallelGroup(Alignment.LEADING)
+				.addGroup(groupLayout.createSequentialGroup().addGap(10)
+						.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE).addComponent(lblWaga)
+								.addComponent(textField_waga, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE,
+										GroupLayout.PREFERRED_SIZE)
+								.addComponent(lblKg))
+						.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
+								.addGroup(groupLayout.createSequentialGroup().addGap(35)
+										.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
+												.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
+														.addComponent(rdbtnPaczka).addComponent(rdbtnList))
+												.addComponent(rdbtnCosInnego)))
+								.addGroup(groupLayout.createSequentialGroup()
+										.addPreferredGap(ComponentPlacement.UNRELATED)
+										.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
+												.addComponent(lblSzklo).addComponent(chckbxTak))
+										.addPreferredGap(ComponentPlacement.UNRELATED).addComponent(lblRodzaj)))
+						.addGap(6)
+						.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
+								.addGroup(groupLayout.createSequentialGroup().addGap(2).addComponent(lblPrzesyka))
+								.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE).addComponent(rdbtnZwyka)
+										.addComponent(rdbtnEkspresowa)))
+						.addGap(15).addComponent(lblDaneAdresata).addGap(19)
+						.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE).addComponent(lblMiasto)
+								.addComponent(textField_miasto_ad, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE,
+										GroupLayout.PREFERRED_SIZE))
+						.addGap(17)
+						.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE).addComponent(lblUlica)
+								.addComponent(textField_adres_ad, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE,
+										GroupLayout.PREFERRED_SIZE))
+						.addGap(18)
+						.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
+								.addComponent(textField_kod_ad, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE,
+										GroupLayout.PREFERRED_SIZE)
+								.addComponent(lblNewLabel).addComponent(label).addComponent(textField_kod_ad1,
+										GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE,
+										GroupLayout.PREFERRED_SIZE))
+						.addGap(15).addComponent(lblDaneNadawcy).addGap(14)
+						.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE).addComponent(lblMiasto_1)
+								.addComponent(textField_miasto_na, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE,
+										GroupLayout.PREFERRED_SIZE))
+						.addGap(18)
+						.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
+								.addGroup(groupLayout.createSequentialGroup().addGap(3).addComponent(lblUlica_1))
+								.addComponent(textField_adres_na, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE,
+										GroupLayout.PREFERRED_SIZE))
+						.addGap(20)
+						.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE).addComponent(lblKodPocztowy)
+								.addComponent(textField_kod_na, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE,
+										GroupLayout.PREFERRED_SIZE)
+								.addComponent(label_1).addComponent(textField_kod_na1, GroupLayout.PREFERRED_SIZE,
+										GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+						.addGap(25)
+						.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE).addComponent(lblKoszt)
+								.addComponent(textField_koszt, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE,
+										GroupLayout.PREFERRED_SIZE)
+								.addComponent(lblZ))
+						.addGap(18).addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
+								.addComponent(btnZamwKuriera).addComponent(btnPowrot))
+						.addGap(43)));
+		frame.getContentPane().setLayout(groupLayout);
+		btnPowrot.addActionListener(myAction);
+		btnZamwKuriera.addActionListener(myAction);
+
 	}
+
 	private class MyActionListener implements ActionListener {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			boolean flag = true;
-
 			String co = ((JButton) e.getSource()).getText();
 			switch (co) {
-			case "Wyslij zamowienie":
-				frame.setVisible(false);
+			case "Zamow kuriera":
+				if (komunikat_waga())
+					break;
+				if (komunikat_miasto(textField_miasto_ad.getText()) || komunikat_miasto(textField_miasto_na.getText()))
+					break;
+				if (komunikat_adres(textField_adres_ad.getText()) || komunikat_adres(textField_adres_na.getText()))
+					break;
+				if (komunikat_kod(textField_kod_ad.getText()) || (komunikat_kod(textField_kod_ad1.getText())))
+					break;
+				if (komunikat_kod(textField_kod_na.getText()) || (komunikat_kod(textField_kod_na1.getText())))
+					break;
+
 				break;
 			case "Powrot":
-				frame.setVisible(false);
-				new StronaGlowna();
-				break;
+				int tmp = JOptionPane.showConfirmDialog(null, "Czy na pewno chcesz opuscic strone?");
+				if (tmp == JOptionPane.YES_OPTION) {
+					frame.setVisible(false);
+					new StronaGlowna();
+					break;
+				}
 			}
+		}
 
+		private boolean komunikat_waga() {
+			String waga = textField_waga.getText();
+			double as = 0;
+			try {
+				as = Double.parseDouble(textField_waga.getText());
+			} catch (Exception exp) {
+				if (waga.isEmpty())
+					JOptionPane.showMessageDialog(null, "Przesylka musi posiadac wage");
+				else if (waga.contains(","))
+					JOptionPane.showMessageDialog(null, "Zamiast przecinka wstaw kropke.");
+				else if (waga.isEmpty())
+					JOptionPane.showMessageDialog(null, "Przesylka musi posiadac wage");
+				else
+					JOptionPane.showMessageDialog(null, "Waga musi byc liczba!");
+				return true;
+			}
+			if (as <= 0) {
+				JOptionPane.showMessageDialog(null, "Przesylka musi posiadac wage wieksza od 0");
+				return true;
+			} else if (as > 1000) {
+				JOptionPane.showMessageDialog(null, "Nasza firma nie oferuje transportu dla przesylek powyzej 1000kg");
+				return true;
+			} else
+				return false;
+		}
+
+		private boolean komunikat_kod(String kod) {
+			try {
+				Double.parseDouble(kod);
+			} catch (Exception exp) {
+				if (kod.isEmpty())
+					JOptionPane.showMessageDialog(null, "Uzupelnuj kod pocztowy!");
+				else
+					JOptionPane.showMessageDialog(null, "Kod musi byc liczba!");
+				return true;
+			}
+			return false;
+		}
+
+		private boolean komunikat_miasto(String miasto) {
+			try {
+				Double.parseDouble(miasto);
+			} catch (Exception exp) {
+				if (miasto.isEmpty()) {
+					JOptionPane.showMessageDialog(null, "Podaj miasto!");
+					return true;
+				} else
+					return false;
+			}
+			JOptionPane.showMessageDialog(null, "Miasto nie moze byc liczba!");
+			return true;
+		}
+
+		private boolean komunikat_adres(String adres) {
+			try {
+				Double.parseDouble(adres);
+			} catch (Exception exp) {
+				if (adres.isEmpty()) {
+					JOptionPane.showMessageDialog(null, "Podaj adres!");
+					return true;
+				} else
+					return false;
+			}
+			return false;
 		}
 	}
 }

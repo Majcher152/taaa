@@ -51,7 +51,7 @@ public class ZalogujKurier {
 	private void initialize() {
 		MyActionListener myAction = new MyActionListener();
 		frame = new JFrame();
-		frame.setBounds(100, 100, 595, 398);
+		frame.setBounds(100, 100, 600, 400);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		SpringLayout springLayout = new SpringLayout();
 		frame.getContentPane().setLayout(springLayout);
