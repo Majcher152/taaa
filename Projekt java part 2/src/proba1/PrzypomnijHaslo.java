@@ -31,6 +31,20 @@ public class PrzypomnijHaslo {
 	}
 
 	/**
+	 * asdddddd
+	 * asd
+	 * asd
+	 * asd
+	 * a
+	 * d
+	 * asd
+	 * asd
+	 * a
+	 * aa
+	 * a
+	 * a
+	 * a
+	 * 
 	 * Initialize the contents of the frame.
 	 */
 	private void initialize() {
