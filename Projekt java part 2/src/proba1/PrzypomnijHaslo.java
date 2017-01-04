@@ -3,6 +3,12 @@ package proba1;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.net.Socket;
+
 import javax.swing.JFrame;
 import javax.swing.SpringLayout;
 import javax.swing.JButton;
@@ -15,8 +21,13 @@ public class PrzypomnijHaslo {
 	private JFrame frame;
 	private JTextField textField;
 	private JTextArea textArea;
+	private PrintWriter output = null;
+	private BufferedReader input = null;
+	private Socket socket = null;
+	private boolean flag = true;
 
-	public PrzypomnijHaslo() {
+	public PrzypomnijHaslo(Socket socket) {
+		this.socket = socket;
 
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
@@ -35,6 +46,8 @@ public class PrzypomnijHaslo {
 	 */
 	private void initialize() {
 		MyActionListener myAction = new MyActionListener();
+		flag = true;
+
 		frame = new JFrame();
 		frame.setBounds(100, 100, 450, 300);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -80,6 +93,30 @@ public class PrzypomnijHaslo {
 		
 		btnSzukaj.addActionListener(myAction);
 		btnPowrot.addActionListener(myAction);
+		
+		try {
+			output = new PrintWriter(socket.getOutputStream(), true);
+			input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+			output.println("PrzypomnijHaslo");
+			output.flush();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		while (flag) {
+
+			try {
+				if (input.ready()) {
+					String aaa = input.readLine();
+					System.out.println(aaa);
+					flag = false;
+				}
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				System.out.println("5");
+				e1.printStackTrace();
+			}
+		}
 	}
 
 	private class MyActionListener implements ActionListener {
@@ -95,7 +132,7 @@ public class PrzypomnijHaslo {
 				break;
 			case "Powrot":
 				frame.setVisible(false);
-				new StronaGlowna();
+				new Logowanie(socket);
 				break;
 			}
 		}

@@ -3,6 +3,9 @@ package proba1;
 import java.awt.EventQueue;
 import javax.swing.JFrame;
 import javax.swing.SpringLayout;
+import javax.swing.text.AttributeSet;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.PlainDocument;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -15,6 +18,11 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import javax.swing.JScrollPane;
 import java.awt.event.MouseWheelListener;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.net.Socket;
 import java.awt.event.MouseWheelEvent;
 import javax.swing.ButtonGroup;
 import java.awt.Font;
@@ -25,6 +33,14 @@ import javax.swing.JComboBox;
 import javax.swing.DefaultComboBoxModel;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import javax.swing.event.ChangeListener;
+import javax.swing.event.ChangeEvent;
+import java.awt.event.ItemListener;
+import java.awt.event.ItemEvent;
 
 public class WyslijPaczke {
 
@@ -49,11 +65,22 @@ public class WyslijPaczke {
 	private JCheckBox chckbx_mie_na;
 	private JCheckBox chckbx_mie_ad;
 	private JLabel lblKoszt;
+	private JCheckBox chckbxTak;
+	private PrintWriter output = null;
+	private BufferedReader input = null;
+	private Socket socket = null;
+	private boolean flag = true;
+	private String rodzaj = null;
+	private boolean ekspres = false;
+	private JRadioButton rdbtnEkspresowa;
+	private JComboBox comboBox_miasto_ad;
+	private JComboBox comboBox_miasto_na;
 
 	/**
 	 * Create the application.
 	 */
-	public WyslijPaczke() {
+	public WyslijPaczke(Socket socket) {
+		this.socket = socket;
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
@@ -71,6 +98,7 @@ public class WyslijPaczke {
 	 */
 	private void initialize() {
 		MyActionListener myAction = new MyActionListener();
+		flag = true;
 		frame = new JFrame();
 		frame.setBounds(100, 100, 500, 641);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -78,87 +106,145 @@ public class WyslijPaczke {
 		JLabel lblWaga = new JLabel("Waga:");
 
 		textField_waga = new JTextField();
+		textField_waga.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyReleased(KeyEvent e) {
+				String waga = textField_waga.getText();
+				double kg = 0;
+				try {
+					kg = Double.parseDouble(waga);
+					if (kg > 0 && kg <= 5) {
+						kg = kg + kg * 0.2;
+						textField_koszt.setText("" + kg);
+					}
+					if (kg > 5 && kg <= 100) {
+						kg = kg + kg * 0.5;
+						textField_koszt.setText("" + kg);
+					}
+					if (kg > 100 && kg < 1000) {
+						kg = kg + kg * 0.7;
+						textField_koszt.setText("" + kg);
+					}
+					if (chckbxTak.isSelected()) {
+						kg += 10;
+						textField_koszt.setText("" + kg);
+					}
+					kasa = kg;
+				} catch (Exception exp) {
+					if (waga.isEmpty())
+						textField_koszt.setText("");
+					kasa = 0;
+				}
+			}
+		});
+
 		textField_waga.setToolTipText("Podaj wage swojej przesy\u0142ki w kilogramach");
 		textField_waga.setColumns(10);
+		textField_waga.setDocument(new JTextFieldLimit(3));
 
 		JLabel lblKg = new JLabel("kg");
 		JLabel lblSzklo = new JLabel("Szklo:");
-		JCheckBox chckbxTak = new JCheckBox("Tak");
+		chckbxTak = new JCheckBox("Tak");
 		chckbxTak.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				if (chckbxTak.isSelected()) {
-					kasa += 10;
-					textField_koszt.setText("" + kasa);
-				} else {
-					kasa -= 10;
-					textField_koszt.setText("" + kasa);
+				String koszt = textField_koszt.getText();
+				double kg = 0;
+				try {
+					kg = Double.parseDouble(koszt);
+					if (chckbxTak.isSelected()) {
+						kg += 10.0;
+						textField_koszt.setText("" + kg);
+					} else {
+						kg -= 10.0;
+						textField_koszt.setText("" + kg);
+					}
+					kasa = kg;
+				} catch (Exception exp) {
+					if (koszt.isEmpty())
+						textField_koszt.setText("");
+					kasa = 0;
 				}
-
 			}
 		});
 		JLabel lblRodzaj = new JLabel("Rodzaj:");
 
-		JRadioButton rdbtnList = new JRadioButton("Mala przesylka");
+		JRadioButton rdbtnList = new JRadioButton("Koperta");
 		rdbtnList.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				if (rdbtnList.isSelected()) {
-					textField_koszt.setText("" + kasa);
-				} else {
-					textField_koszt.setText("" + kasa);
+				rodzaj = "Koperta";
+				String waga = textField_koszt.getText();
+				double kg = kasa;
+				if (waga.isEmpty())
+					textField_koszt.setText("");
+				else {
+					textField_koszt.setText("" + kg);
 				}
 			}
 		});
 		buttonGroup_wielkosc_przesylki.add(rdbtnList);
-		JRadioButton rdbtnPaczka = new JRadioButton("Srednia przesylka");
+		JRadioButton rdbtnPaczka = new JRadioButton("Paczka");
 		rdbtnPaczka.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				if (rdbtnPaczka.isSelected()) {
-					kasa*=2;
-					textField_koszt.setText("" + kasa);
-				} else {
-					kasa /= 2;
-					textField_koszt.setText("" + kasa);
+				rodzaj = "Paczka";
+				String waga = textField_koszt.getText();
+				double kg = kasa;
+				if (waga.isEmpty())
+					textField_koszt.setText("");
+				else {
+					kg += 20;
+					textField_koszt.setText("" + kg);
 				}
 			}
 		});
 		buttonGroup_wielkosc_przesylki.add(rdbtnPaczka);
-		JRadioButton rdbtnCosInnego = new JRadioButton("Duza przesylka");
-		rdbtnCosInnego.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				if (rdbtnCosInnego.isSelected()) {
-					kasa*=3;
-					textField_koszt.setText("" + kasa);
-				} else {
-					kasa /= 3;
-					textField_koszt.setText("" + kasa);
+		JRadioButton rdbtnCosInnego = new JRadioButton("Paleta");
+		rdbtnCosInnego.addItemListener(new ItemListener() {
+			public void itemStateChanged(ItemEvent arg0) {
+				rodzaj = "Paleta";
+				String waga = textField_koszt.getText();
+				double kg = kasa;
+				if (waga.isEmpty())
+					textField_koszt.setText("");
+				else {
+					kg += 100;
+					textField_koszt.setText("" + kg);
 				}
 			}
 		});
-		rdbtnCosInnego.setSelected(true);
+
+		/*
+		 * rdbtnCosInnego.addActionListener(new ActionListener() { public void
+		 * actionPerformed(ActionEvent e) { String waga =
+		 * textField_koszt.getText(); double kg = 0; try { kg =
+		 * Double.parseDouble(waga); kg += 100; textField_koszt.setText("" +
+		 * kg); } catch (Exception exp) { if (waga.isEmpty())
+		 * textField_koszt.setText(""); }
+		 * 
+		 * } });
+		 */
 		buttonGroup_wielkosc_przesylki.add(rdbtnCosInnego);
 
 		JLabel lblPrzesyka = new JLabel("Przesylka:");
 
-		JRadioButton rdbtnEkspresowa = new JRadioButton("ekspresowa");
+		rdbtnEkspresowa = new JRadioButton("ekspresowa");
 		rdbtnEkspresowa.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if (rdbtnCosInnego.isSelected()) {
-					kasa= kasa + kasa*0.5;
-					textField_koszt.setText("" + kasa );
+					kasa = kasa + kasa * 0.5;
+					textField_koszt.setText("" + kasa);
 				} else {
-					kasa = kasa - kasa*0.3;
+					kasa = kasa - kasa * 0.3;
 					textField_koszt.setText("" + kasa);
 				}
 			}
 		});
-		rdbtnEkspresowa.setSelected(true);
 		buttonGroup_1.add(rdbtnEkspresowa);
 		JRadioButton rdbtnZwyka = new JRadioButton("zwykla");
 		rdbtnZwyka.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if (rdbtnCosInnego.isSelected()) {
 					textField_koszt.setText("" + kasa);
-				} 
+				}
 			}
 		});
 		buttonGroup_1.add(rdbtnZwyka);
@@ -167,22 +253,26 @@ public class WyslijPaczke {
 		JLabel lblMiasto = new JLabel("Miasto:");
 		JLabel lblUlica = new JLabel("Ulica:");
 		textField_ulica_ad = new JTextField();
+		textField_ulica_ad.setToolTipText("Podaj ulica skad kurier ma odebrac przesylke");
 		textField_ulica_ad.setColumns(10);
 		JLabel lblNewLabel = new JLabel("Kod pocztowy:");
-		textField_kod_ad = new JTextField("", 2);
-		textField_kod_ad.setColumns(2);
+		textField_kod_ad = new JTextField();
+		textField_kod_ad.setColumns(10);
+		textField_kod_ad.setDocument(new JTextFieldLimit(2));
 		JLabel label = new JLabel("-");
-		textField_kod_ad1 = new JTextField("", 3);
-		textField_kod_ad1.setColumns(3);
+		textField_kod_ad1 = new JTextField();
+		textField_kod_ad1.setColumns(10);
+		textField_kod_ad1.setDocument(new JTextFieldLimit(3));
 
 		JLabel lblDaneNadawcy = new JLabel("Dane nadawcy:");
 		JLabel lblMiasto_1 = new JLabel("Miasto:");
 		JLabel lblUlica_1 = new JLabel("Ulica:");
 		JLabel lblKodPocztowy = new JLabel("Kod pocztowy:");
 		textField_ulica_na = new JTextField();
+		textField_ulica_na.setToolTipText("Podaj ulica gdzie  kurier  ma dostarczyc przesylke");
 		textField_ulica_na.setColumns(10);
 
-		 lblKoszt = new JLabel("Koszt:");
+		lblKoszt = new JLabel("Koszt:");
 		lblKoszt.setFont(new Font("Tahoma", Font.BOLD, 14));
 		textField_koszt = new JTextField();
 		textField_koszt.setEditable(false);
@@ -197,11 +287,13 @@ public class WyslijPaczke {
 
 		textField_kod_na = new JTextField();
 		textField_kod_na.setColumns(10);
+		textField_kod_na.setDocument(new JTextFieldLimit(2));
 
 		JLabel label_1 = new JLabel("-");
 
 		textField_kod_na1 = new JTextField();
 		textField_kod_na1.setColumns(10);
+		textField_kod_na1.setDocument(new JTextFieldLimit(3));
 
 		JLabel lblNrDomuI = new JLabel("Nr domu:");
 
@@ -225,11 +317,11 @@ public class WyslijPaczke {
 		textField_nr_mie_na.setEditable(false);
 		textField_nr_mie_na.setColumns(10);
 
-		JComboBox comboBox_miasto_ad = new JComboBox();
+		comboBox_miasto_ad = new JComboBox();
 		comboBox_miasto_ad.setModel(new DefaultComboBoxModel(
 				new String[] { "Krakow", "Warszawa", "Katowice", "Poznan", "Wroclaw", "Gdansk", "Gdynia" }));
 
-		JComboBox comboBox_miasto_na = new JComboBox();
+		comboBox_miasto_na = new JComboBox();
 		comboBox_miasto_na.setModel(new DefaultComboBoxModel(
 				new String[] { "Krakow", "Warszawa", "Katowice", "Poznan", "Wroclaw", "Gdansk", "Gdynia" }));
 
@@ -433,9 +525,41 @@ public class WyslijPaczke {
 		btnPowrot.addActionListener(myAction);
 		btnZamwKuriera.addActionListener(myAction);
 
+		try {
+			output = new PrintWriter(socket.getOutputStream(), true);
+			input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+			output.println("Wyslij Paczke");
+			output.flush();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		while (flag) {
+
+			try {
+				if (input.ready()) {
+					String aaa = input.readLine();
+					System.out.println(aaa);
+					flag = false;
+				}
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				System.out.println("5");
+				e1.printStackTrace();
+			}
+		}
 	}
 
 	private class MyActionListener implements ActionListener {
+		private double wagaWartosc;
+		private int domAd;
+		private int domNa;
+		private int mieAd;
+		private int mieNa;
+		private int kod1Ad;
+		private int kod1Na;
+		private int kod2Ad;
+		private int kod2Na;
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
@@ -458,13 +582,19 @@ public class WyslijPaczke {
 					break;
 				if (komunikat_kod(textField_kod_na.getText()) || (komunikat_kod(textField_kod_na1.getText())))
 					break;
+				Paczka p = new Paczka(wagaWartosc, chckbxTak.isSelected(), rodzaj, rdbtnEkspresowa.isSelected(),
+						(String) comboBox_miasto_ad.getSelectedItem(), textField_ulica_ad.getText(), domAd, mieAd,
+						kod1Ad, kod2Ad, (String) comboBox_miasto_na.getSelectedItem(), textField_ulica_na.getText(),
+						domNa, mieNa, kod1Na, kod2Na);
+				System.out.println(kod1Ad + " " + kod2Ad + " " + kod1Na + " " + kod1Na + " ");
+				JOptionPane.showMessageDialog(null, p.toString());
 
 				break;
 			case "Powrot":
 				int tmp = JOptionPane.showConfirmDialog(null, "Czy na pewno chcesz opuscic strone?");
 				if (tmp == JOptionPane.YES_OPTION) {
 					frame.setVisible(false);
-					new StronaGlowna();
+					new StronaGlowna(socket);
 					break;
 				}
 			}
@@ -472,9 +602,9 @@ public class WyslijPaczke {
 
 		private boolean komunikat_waga() {
 			String waga = textField_waga.getText();
-			double as = 0;
+			wagaWartosc = 0;
 			try {
-				as = Double.parseDouble(textField_waga.getText());
+				wagaWartosc = Double.parseDouble(textField_waga.getText());
 			} catch (Exception exp) {
 				if (waga.isEmpty())
 					JOptionPane.showMessageDialog(null, "Przesylka musi posiadac wage");
@@ -486,19 +616,28 @@ public class WyslijPaczke {
 					JOptionPane.showMessageDialog(null, "Waga musi byc liczba!");
 				return true;
 			}
-			if (as <= 0) {
+			if (wagaWartosc <= 0) {
 				JOptionPane.showMessageDialog(null, "Przesylka musi posiadac wage wieksza od 0");
 				return true;
-			} else if (as > 1000) {
-				JOptionPane.showMessageDialog(null, "Nasza firma nie oferuje transportu dla przesylek powyzej 1000kg");
+			} else if (wagaWartosc >= 1000) {
+				JOptionPane.showMessageDialog(null, "Nasza firma nie oferuje transportu dla przesylek 1000kg i wyzej");
 				return true;
 			} else
 				return false;
 		}
 
 		private boolean komunikat_kod(String kod) {
+			System.out.println(kod);
+			// KURWA TAK BO JAK WPISZESZ COS W 1 KOD "2" A POTEM MASZ W DRUGIM KODZIE "22" TO TA KURWA DWOJA TEZ JEST JAPIERDOLE
 			try {
-				Double.parseDouble(kod);
+				if (kod.contains(textField_kod_ad.getText()))
+					kod1Ad = (int) Double.parseDouble(kod);
+				else if (kod.contains(textField_kod_na.getText()))
+					kod1Na = (int) Double.parseDouble(kod);
+				else if (kod.contains( textField_kod_ad1.getText()))
+					kod2Ad = (int) Double.parseDouble(kod);
+				else if (kod.contains(textField_kod_na1.getText()))
+					kod2Na = (int) Double.parseDouble(kod);
 			} catch (Exception exp) {
 				if (kod.isEmpty())
 					JOptionPane.showMessageDialog(null, "Uzupelnuj kod pocztowy!");
@@ -539,7 +678,10 @@ public class WyslijPaczke {
 
 		private boolean komunikat_dom(String dom) {
 			try {
-				Double.parseDouble(dom);
+				if (dom.contains(textField_nr_dom_ad.getText()))
+					domAd = (int) Double.parseDouble(dom);
+				else
+					domNa = (int) Double.parseDouble(dom);
 			} catch (Exception exp) {
 				if (dom.isEmpty())
 					JOptionPane.showMessageDialog(null, "Uzupelnij numer domu!");
@@ -552,7 +694,7 @@ public class WyslijPaczke {
 
 		private boolean komunikat_mieszkanie_na(String mieszkanie) {
 			try {
-				Double.parseDouble(mieszkanie);
+				mieNa = (int) Double.parseDouble(mieszkanie);
 			} catch (Exception exp) {
 				if (mieszkanie.isEmpty()) {
 					if (chckbx_mie_na.isSelected()) {
@@ -567,23 +709,48 @@ public class WyslijPaczke {
 			}
 			return false;
 		}
+
+		private boolean komunikat_mieszkanie_ad(String mieszkanie) {
+			try {
+				mieAd = (int) Double.parseDouble(mieszkanie);
+			} catch (Exception exp) {
+				if (mieszkanie.isEmpty()) {
+					if (chckbx_mie_ad.isSelected()) {
+						JOptionPane.showMessageDialog(null, "Uzupelnij numer mieszkania!");
+						return true;
+					} else
+						return false;
+				} else {
+					JOptionPane.showMessageDialog(null, "Numer mieszkania musi byc liczba!");
+					return true;
+				}
+			}
+			return false;
+		}
+
 	}
 
-	private boolean komunikat_mieszkanie_ad(String mieszkanie) {
-		try {
-			Double.parseDouble(mieszkanie);
-		} catch (Exception exp) {
-			if (mieszkanie.isEmpty()) {
-				if (chckbx_mie_ad.isSelected()) {
-					JOptionPane.showMessageDialog(null, "Uzupelnij numer mieszkania!");
-					return true;
-				} else
-					return false;
-			} else {
-				JOptionPane.showMessageDialog(null, "Numer mieszkania musi byc liczba!");
-				return true;
+	private class JTextFieldLimit extends PlainDocument {
+		private int limit;
+
+		JTextFieldLimit(int limit) {
+			super();
+			this.limit = limit;
+		}
+
+		JTextFieldLimit(int limit, boolean upper) {
+			super();
+			this.limit = limit;
+		}
+
+		public void insertString(int offset, String str, AttributeSet attr) throws BadLocationException {
+			if (str == null)
+				return;
+
+			if ((getLength() + str.length()) <= limit) {
+				super.insertString(offset, str, attr);
 			}
 		}
-		return false;
 	}
+
 }

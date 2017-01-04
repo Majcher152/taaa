@@ -27,7 +27,6 @@ public class SerwerObslugaZadan {
 		int port = 1500;
 		// Adres gniazda (adres IP + port)
 		InetSocketAddress iSA = new InetSocketAddress(host, port);
-
 		try {
 			// Utworzenie gniazda serwera
 			sS = new ServerSocket();
@@ -47,7 +46,6 @@ public class SerwerObslugaZadan {
 		// Ustawienie gniazda serwera
 		this.serwerSocket = sS;
 		System.out.println("Serwer: - Rozpoczêcie dzia³ania");
-		
 		// Nasluchiwanie polaczen od klientow
 		obslugaPolaczenOdKlineta(); 
 	}
@@ -62,9 +60,10 @@ public class SerwerObslugaZadan {
 				connection = serwerSocket.accept();
 				System.out.println("Polaczenie ustawione ");
 				System.out.println("Klient " + KlientSerwer.ktoryKlient++);
-
 				// Start watku obs³ugi zlecen
 				new ObslugaZadan(connection).start();
+				
+				
 			} catch (Exception e1) {
 				e1.printStackTrace();
 			}

@@ -6,7 +6,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
-import java.util.Scanner;
+
 
 public class KlientSerwer extends Thread {
 
@@ -14,7 +14,7 @@ public class KlientSerwer extends Thread {
 	private PrintWriter out = null;
 	private BufferedReader in = null;
 	public static int ktoryKlient;
-	String name = null;
+	private String name = null;
 
 	public KlientSerwer(String host, int port) {
 
@@ -27,7 +27,7 @@ public class KlientSerwer extends Thread {
 			start();
 		} catch (UnknownHostException e) {
 			System.err.println("Nieznany host: " + host + " dla " + name);
-			System.exit(2);
+			System.exit(2);	
 		} catch (IOException e) {
 			System.err.println("I/O error dla	" + name);
 			System.exit(3);
@@ -40,24 +40,13 @@ public class KlientSerwer extends Thread {
 
 
 	public void run() {
-		new StronaGlowna(); 
+		new StronaGlowna(sock);
 	}
 
-
-
-	private void makeRequest(String req) throws IOException {
-		// System.out.println("Request: " + req);
-		System.out.println(req);
-		out.println(req);
-		String resp = in.readLine();
-		System.out.println(resp);
-	}
 
 	public static void main(String[] args) {
 		String host = "127.0.0.1"; // nazwa hosta
 		int port = 1500; // numer portu
-
-		// for(; i <5;i++)
 		new KlientSerwer(host, port);
 	}
 

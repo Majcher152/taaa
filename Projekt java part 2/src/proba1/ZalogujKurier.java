@@ -23,16 +23,25 @@ import javax.swing.JOptionPane;
 import javax.swing.AbstractListModel;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.net.Socket;
 
 public class ZalogujKurier {
 
 	private JFrame frame;
 	private String login;
-	private String haslo;
+	private PrintWriter output = null;
+	private BufferedReader input = null;
+	private Socket socket = null;
+	private boolean flag = true;
 
-	public ZalogujKurier(String login, String haslo) {
+	public ZalogujKurier(String login,Socket socket) {
 		this.login = login;
-		this.haslo = haslo;
+		this.socket = socket;
+
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
@@ -50,6 +59,8 @@ public class ZalogujKurier {
 	 */
 	private void initialize() {
 		MyActionListener myAction = new MyActionListener();
+		flag = true;
+
 		frame = new JFrame();
 		frame.setBounds(100, 100, 600, 400);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -62,8 +73,10 @@ public class ZalogujKurier {
 		springLayout.putConstraint(SpringLayout.SOUTH, textArea, -10, SpringLayout.SOUTH, frame.getContentPane());
 		frame.getContentPane().add(textArea);
 
-		textArea.setText(login + " " + haslo.toString());
-
+		//textArea.setText(login + " " + haslo.toString());
+		textArea.setText(login + " ");
+		
+		
 		JButton btnWyloguj = new JButton("Wyloguj");
 		springLayout.putConstraint(SpringLayout.EAST, textArea, 0, SpringLayout.EAST, btnWyloguj);
 		springLayout.putConstraint(SpringLayout.NORTH, btnWyloguj, 10, SpringLayout.NORTH, frame.getContentPane());
@@ -126,6 +139,30 @@ public class ZalogujKurier {
 		panel.setLayout(gl_panel);
 
 		btnWyloguj.addActionListener(myAction);
+		
+		try {
+			output = new PrintWriter(socket.getOutputStream(), true);
+			input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+			output.println("ZalogujKurier");
+			output.flush();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		while (flag) {
+
+			try {
+				if (input.ready()) {
+					String aaa = input.readLine();
+					System.out.println(aaa);
+					flag = false;
+				}
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				System.out.println("5");
+				e1.printStackTrace();
+			}
+		}
 	}
 
 	private class MyActionListener implements ActionListener {
@@ -138,7 +175,7 @@ public class ZalogujKurier {
 				int tmp = JOptionPane.showConfirmDialog(null, "Czy na pewno chcesz sie wylogowac?");
 				if (tmp == JOptionPane.YES_OPTION) {
 					frame.setVisible(false);
-					new StronaGlowna();
+					new StronaGlowna(socket);
 					break;
 				}
 			}

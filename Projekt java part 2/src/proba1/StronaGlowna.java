@@ -3,6 +3,12 @@ package proba1;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.net.Socket;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -25,11 +31,17 @@ public class StronaGlowna {
 
 	private JFrame frame;
 	private JTextField textField;
+	private PrintWriter output = null;
+	private BufferedReader input = null;
+	private Socket socket = null;
+	private boolean flag = true;
 
 	/**
 	 * Create the application.
 	 */
-	public StronaGlowna() {
+	public StronaGlowna(Socket socket) {
+		this.socket = socket;
+
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
@@ -48,7 +60,7 @@ public class StronaGlowna {
 	 */
 	private void initialize() {
 		MyActionListener myAction = new MyActionListener();
-
+		flag = true;
 		frame = new JFrame();
 		frame.setBounds(100, 100, 450, 300);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -82,15 +94,38 @@ public class StronaGlowna {
 		frame.getContentPane().add(btnlogowanie);
 		frame.getContentPane().add(btnwyslijPaczke);
 		frame.getContentPane().add(btnznajdzSwojaPaczke);
-		
-				JButton btnwyjscie = new JButton("4. Wyjscie");
-				springLayout.putConstraint(SpringLayout.NORTH, btnwyjscie, 6, SpringLayout.SOUTH, btnznajdzSwojaPaczke);
-				springLayout.putConstraint(SpringLayout.WEST, btnwyjscie, 6, SpringLayout.WEST, frame.getContentPane());
-				springLayout.putConstraint(SpringLayout.EAST, btnwyjscie, 0, SpringLayout.EAST, btnlogowanie);
-				btnwyjscie.addActionListener(myAction);
-				frame.getContentPane().add(btnwyjscie);
+
+		JButton btnwyjscie = new JButton("4. Wyjscie");
+		springLayout.putConstraint(SpringLayout.NORTH, btnwyjscie, 6, SpringLayout.SOUTH, btnznajdzSwojaPaczke);
+		springLayout.putConstraint(SpringLayout.WEST, btnwyjscie, 6, SpringLayout.WEST, frame.getContentPane());
+		springLayout.putConstraint(SpringLayout.EAST, btnwyjscie, 0, SpringLayout.EAST, btnlogowanie);
+		btnwyjscie.addActionListener(myAction);
+		frame.getContentPane().add(btnwyjscie);
 		frame.getContentPane().add(lblNewLabel);
 		frame.getContentPane().add(lblCoChciabyWykona);
+		try {
+			output = new PrintWriter(socket.getOutputStream(), true);
+			input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+			output.println("Strona Glowna");
+			output.flush();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		while (flag) {
+
+			try {
+				if (input.ready()) {
+					String aaa = input.readLine();
+					System.out.println(aaa);
+					flag = false;
+				}
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				System.out.println("5");
+				e1.printStackTrace();
+			}
+		}
 	}
 
 	private class MyActionListener implements ActionListener {
@@ -103,16 +138,16 @@ public class StronaGlowna {
 			switch (co) {
 			case "1. Logowanie":
 				frame.setVisible(false);
-				new Logowanie();
+				 new Logowanie(socket);
 
 				break;
 			case "2. Wyslij paczke":
 				frame.setVisible(false);
-				new WyslijPaczke();
+				 new WyslijPaczke(socket);
 				break;
 			case "3. Znajdz swoja paczke":
 				frame.setVisible(false);
-				new ZnajdzSwojaPaczke();
+				 new ZnajdzSwojaPaczke(socket);
 				break;
 			case "4. Wyjscie":
 				int tmp = JOptionPane.showConfirmDialog(null, "Czy na pewno chcesz opuscic program?");

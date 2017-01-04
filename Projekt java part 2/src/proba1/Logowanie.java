@@ -3,8 +3,15 @@ package proba1;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.net.Socket;
+
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.JButton;
 import javax.swing.SpringLayout;
@@ -15,11 +22,16 @@ public class Logowanie {
 	private JFrame frame;
 	private JTextField textField_1;
 	private JPasswordField passwordField;
+	private Socket socket = null;
+	private boolean flag = true;
+	private PrintWriter output = null;
+	private BufferedReader input = null;
 
 	/**
 	 * Create the application.
 	 */
-	public Logowanie() {
+	public Logowanie(Socket socket) {
+		this.socket = socket;
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
@@ -37,6 +49,7 @@ public class Logowanie {
 	 */
 	private void initialize() {
 		MyActionListener myAction = new MyActionListener();
+		flag = true;
 		frame = new JFrame();
 		frame.setBounds(100, 100, 450, 300);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -77,36 +90,88 @@ public class Logowanie {
 		springLayout.putConstraint(SpringLayout.WEST, btnNewButton, 25, SpringLayout.EAST, btnZaloguj);
 		springLayout.putConstraint(SpringLayout.WEST, btnZaloguj, 0, SpringLayout.WEST, lblLogin);
 		frame.getContentPane().add(btnZaloguj);
-		
+
 		passwordField = new JPasswordField();
 		springLayout.putConstraint(SpringLayout.NORTH, passwordField, -3, SpringLayout.NORTH, lblHaslo);
 		springLayout.putConstraint(SpringLayout.WEST, passwordField, 0, SpringLayout.WEST, textField_1);
 		springLayout.putConstraint(SpringLayout.EAST, passwordField, 0, SpringLayout.EAST, textField_1);
 		frame.getContentPane().add(passwordField);
 		btnZaloguj.addActionListener(myAction);
+
+		try {
+			output = new PrintWriter(socket.getOutputStream(), true);
+			input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+			output.println("Logowanie");
+			output.flush();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		while (flag) {
+
+			try {
+				if (input.ready()) {
+					String aaa = input.readLine();
+					System.out.println(aaa);
+					flag = false;
+				}
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				System.out.println("5");
+				e1.printStackTrace();
+			}
+		}
 	}
 
 	private class MyActionListener implements ActionListener {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-				String co = ((JButton) e.getSource()).getText();
-				switch (co) {
-				case "Zaloguj":
-					String login = textField_1.getText();
-					String haslo1 = passwordField.getText();
-					new ZalogujKurier(login,haslo1);
+			String co = ((JButton) e.getSource()).getText();
+			switch (co) {
+			case "Zaloguj":
+				String login = textField_1.getText();
+				String haslo1 = passwordField.getText();
+				if (sprawdzanieHasla(login, haslo1)) {
+					new ZalogujKurier(login, socket);
 					frame.setVisible(false);
 					break;
-				case "Przypomnij haslo":
-					new PrzypomnijHaslo();
-					frame.setVisible(false);
-					break;
-				case "Powrot":
-					frame.setVisible(false);
-					new StronaGlowna();
+				} else {
+					JOptionPane.showMessageDialog(null, "Niepoprawny login lub haslo");
 					break;
 				}
+			case "Przypomnij haslo":
+				new PrzypomnijHaslo(socket);
+				frame.setVisible(false);
+				break;
+			case "Powrot":
+				frame.setVisible(false);
+				new StronaGlowna(socket);
+				break;
 			}
+		}
+
+		private boolean sprawdzanieHasla(String login, String haslo) {
+			output.println(login);
+			output.flush();
+			boolean flagHaslo = true;
+			while (flagHaslo) {
+				try {
+					if (input.ready()) {
+						String loginHaslo = input.readLine();
+						if (loginHaslo.contains(haslo))
+							return true;
+						else
+							return false;
+
+					}
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					System.out.println("5");
+					e1.printStackTrace();
+				}
+			}
+			return false;
+		}
 	}
 }

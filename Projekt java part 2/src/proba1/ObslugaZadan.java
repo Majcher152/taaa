@@ -14,71 +14,88 @@ public class ObslugaZadan extends Thread {
 	private PrintWriter out = null;
 	// Gniazdo klienta
 	private Socket connection = null;
-
-	// #######################################
-	// Nie dzia³a, jak narazie
-	// #######################################
-	private void wypiszOdpowiedz(String odpowiedz) throws IOException {
-		if (odpowiedz != null)
-			// Wypisanie odpowiedzi klientowi
-			out.println("GOOD JOB " + odpowiedz);
-	}
+	private boolean flag = true;
 
 	public ObslugaZadan(Socket connection) {
 		// Ustawienie gniazda klienta
 		this.connection = connection;
 		// Klient.ktoryKlient++;
+	}
+
+	public void run() {
+		// Utworzenie strumieni kominukacji z klientem (odczyt+zapis)
 		try {
-			// Utworzenie strumieni kominukacji z klientem (odczyt+zapis)
 			in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
 			out = new PrintWriter(connection.getOutputStream(), true);
 			out.println("Klient " + KlientSerwer.ktoryKlient);
-		} catch (Exception exc) {
-			exc.printStackTrace();
+			out.flush();
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+
+		while (flag) {
 			try {
-				// Zamkniecie gniazda klienta
-				connection.close();
-			} catch (Exception e) {
+				String aaa = null;
+				if (in.ready()) {
+					aaa = in.readLine();
+					System.out.println(aaa);
+					ObslugaKomunikatowOdKlienta(aaa);
+				}
+			} catch (Exception exc) {
+				exc.printStackTrace();
+				try {
+					// Zamkniecie gniazda klienta
+					connection.close();
+					flag = false;
+				} catch (Exception e) {
+				}
 			}
 		}
 	}
 
-	// #######################################
-	// Nie dzia³a, jak narazie, tzn dzia³a ale bez b³êdów ale nic nie wypisze
-	// #######################################
-	public void run() {
-		try {
-			String line = in.readLine();
-			// Odczytywanie zlecen klienta
-
-			switch (line) {
-			case "1":
-				// logowanie
-				break;
-			case "2":
-				// Zapomniane Has³o
-				break;
-			case "3":
-				// exit
-				wypiszOdpowiedz("bye bye My love <3 ");
-				break;
-			default:
-				// Odpowiedz serwera
-				String odpowiedz;
-				// System.out.println(line + "\n");
-				wypiszOdpowiedz(line);
+	private void ObslugaKomunikatowOdKlienta(String komunikat) {
+		out.println("no elo " + komunikat);
+		out.flush();
+		if (komunikat.contains("Strona")) {
+			// System.out.println("dziala strona");
+			// nic nie trzeba robic z baza TAK SADZE!!!
+		}
+		if (komunikat.contains("Logowanie")) {
+			boolean flagaLogowanie = true;
+			while (flagaLogowanie) {
+				try {
+					String login = null;
+					if (in.ready()) {
+						login = in.readLine();
+						// WYSY£AMY TO DO BAZY DANYCH I POBIERAMY HASLO
+						String haslo = "a";
+						out.println(haslo);
+						out.flush();
+						flagaLogowanie = false;
+					}
+				} catch (Exception exc) {
+					exc.printStackTrace();
+					try {
+						// Zamkniecie gniazda klienta
+						connection.close();
+						flagaLogowanie = false;
+					} catch (Exception e) {
+					}
+				}
 
 			}
+			if (komunikat.contains("Wyslij Paczke")) {
 
-		} catch (Exception exc) {
-			exc.printStackTrace();
-		} finally {
-			try {
-				// Zamkniecie strumieni i gniazda
-				in.close();
-				out.close();
-				connection.close();
-			} catch (Exception exc) {
+			}
+			if (komunikat.contains("ZnajdzSwojaPaczke")) {
+
+			}
+			if (komunikat.contains("ZalogujKurier")) {
+
+			}
+			if (komunikat.contains("PrzypomnijHaslo")) {
+
 			}
 		}
 	}
