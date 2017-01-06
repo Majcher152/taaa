@@ -1,6 +1,8 @@
 package proba1;
 
-public class Dane {
+import java.io.Serializable;
+
+public class Dane implements Serializable {
 
 	private String miasto;
 	private String ulica;
@@ -44,8 +46,13 @@ public class Dane {
 
 	@Override
 	public String toString() {
-		return "Dane [miasto=" + miasto + ", ulica=" + ulica + ", nrDomu=" + nrDomu + ", nrMieszkania=" + nrMieszkania
-				+ ", kodPocztowy1=" + kodPocztowy1 + ", kodPocztowy2=" + kodPocztowy2 + "]";
+		if (nrMieszkania == 0) {
+			return "\n	Miasto = " + miasto + "\n	Ulica = " + ulica + "\n	Numer domu = " + nrDomu
+					+ "\n	Kod pocztowy =" + kodPocztowy1 + "-" + kodPocztowy2;
+		} else
+			return "\n	Miasto = " + miasto + "\n	Ulica = " + ulica + "\n	Numer domu = " + nrDomu
+					+ "\n	Numer mieszkania = " + nrMieszkania + "\n	Kod pocztowy = " + kodPocztowy1 + "-"
+					+ kodPocztowy2;
 	}
 
 }

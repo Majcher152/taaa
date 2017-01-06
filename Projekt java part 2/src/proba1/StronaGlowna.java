@@ -9,12 +9,10 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.Socket;
-
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
-
 import java.awt.BorderLayout;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
@@ -35,6 +33,7 @@ public class StronaGlowna {
 	private BufferedReader input = null;
 	private Socket socket = null;
 	private boolean flag = true;
+
 
 	/**
 	 * Create the application.
@@ -60,7 +59,6 @@ public class StronaGlowna {
 	 */
 	private void initialize() {
 		MyActionListener myAction = new MyActionListener();
-		flag = true;
 		frame = new JFrame();
 		frame.setBounds(100, 100, 450, 300);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -103,43 +101,17 @@ public class StronaGlowna {
 		frame.getContentPane().add(btnwyjscie);
 		frame.getContentPane().add(lblNewLabel);
 		frame.getContentPane().add(lblCoChciabyWykona);
-		try {
-			output = new PrintWriter(socket.getOutputStream(), true);
-			input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-			output.println("Strona Glowna");
-			output.flush();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		while (flag) {
-
-			try {
-				if (input.ready()) {
-					String aaa = input.readLine();
-					System.out.println(aaa);
-					flag = false;
-				}
-			} catch (IOException e1) {
-				// TODO Auto-generated catch block
-				System.out.println("5");
-				e1.printStackTrace();
-			}
-		}
 	}
 
 	private class MyActionListener implements ActionListener {
-
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			boolean flag = true;
-
+			ustawienieInputOutput();
 			String co = ((JButton) e.getSource()).getText();
 			switch (co) {
 			case "1. Logowanie":
 				frame.setVisible(false);
-				 new Logowanie(socket);
-
+				new Logowanie(socket);
 				break;
 			case "2. Wyslij paczke":
 				frame.setVisible(false);
@@ -152,12 +124,43 @@ public class StronaGlowna {
 			case "4. Wyjscie":
 				int tmp = JOptionPane.showConfirmDialog(null, "Czy na pewno chcesz opuscic program?");
 				if (tmp == JOptionPane.YES_OPTION) {
+					String mess = "Wyjscie";
+					io(output,input,mess);
 					frame.setVisible(false);
 					System.exit(0);
 					break;
 				}
 			}
 
+		}
+		private void ustawienieInputOutput()
+		{
+			try {
+				output = new PrintWriter(socket.getOutputStream(), true);
+				input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+			} catch (IOException e2) {
+				// TODO Auto-generated catch block
+				e2.printStackTrace();
+			}
+		}
+		private void io(PrintWriter output, BufferedReader input, String mess)
+		{	
+			flag = true;
+			output.println(mess);
+			output.flush();
+			while (flag) {
+				try {
+					if (input.ready()) {
+						String aaa = input.readLine();
+						System.out.println(aaa);
+						flag = false;
+					}
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					System.out.println("5");
+					e1.printStackTrace();
+				}
+			}
 		}
 	}
 }

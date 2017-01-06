@@ -8,7 +8,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
-
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -49,7 +48,6 @@ public class Logowanie {
 	 */
 	private void initialize() {
 		MyActionListener myAction = new MyActionListener();
-		flag = true;
 		frame = new JFrame();
 		frame.setBounds(100, 100, 450, 300);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -97,36 +95,13 @@ public class Logowanie {
 		springLayout.putConstraint(SpringLayout.EAST, passwordField, 0, SpringLayout.EAST, textField_1);
 		frame.getContentPane().add(passwordField);
 		btnZaloguj.addActionListener(myAction);
-
-		try {
-			output = new PrintWriter(socket.getOutputStream(), true);
-			input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-			output.println("Logowanie");
-			output.flush();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		while (flag) {
-
-			try {
-				if (input.ready()) {
-					String aaa = input.readLine();
-					System.out.println(aaa);
-					flag = false;
-				}
-			} catch (IOException e1) {
-				// TODO Auto-generated catch block
-				System.out.println("5");
-				e1.printStackTrace();
-			}
-		}
 	}
 
 	private class MyActionListener implements ActionListener {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
+			ustawienieInputOutput();
 			String co = ((JButton) e.getSource()).getText();
 			switch (co) {
 			case "Zaloguj":
@@ -145,21 +120,57 @@ public class Logowanie {
 				frame.setVisible(false);
 				break;
 			case "Powrot":
+				String mess = "Powrot";
+				io(output, input, mess);
 				frame.setVisible(false);
 				new StronaGlowna(socket);
 				break;
 			}
 		}
 
+		private void ustawienieInputOutput() {
+			try {
+				output = new PrintWriter(socket.getOutputStream(), true);
+				input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+			} catch (IOException e2) {
+				// TODO Auto-generated catch block
+				e2.printStackTrace();
+			}
+		}
+
+		private void io(PrintWriter output, BufferedReader input, String mess) {
+			flag = true;
+			output.println(mess);
+			output.flush();
+			while (flag) {
+				try {
+					if (input.ready()) {
+						String aaa = input.readLine();
+						System.out.println(aaa);
+						flag = false;
+					}
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					System.out.println("5");
+					e1.printStackTrace();
+				}
+			}
+		}
+
 		private boolean sprawdzanieHasla(String login, String haslo) {
+			output.println("ZalogujKurier");
+			output.flush();
 			output.println(login);
+			output.flush();
+			output.println(haslo);
 			output.flush();
 			boolean flagHaslo = true;
 			while (flagHaslo) {
 				try {
 					if (input.ready()) {
 						String loginHaslo = input.readLine();
-						if (loginHaslo.contains(haslo))
+						System.out.println("Haslo " + loginHaslo);
+						if (loginHaslo.contains("Poprawne"))
 							return true;
 						else
 							return false;
@@ -173,5 +184,31 @@ public class Logowanie {
 			}
 			return false;
 		}
+
+		private void nieWiem() {
+			try {
+				output = new PrintWriter(socket.getOutputStream(), true);
+				input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+				output.println("ZalogujKurier");
+				output.flush();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			while (flag) {
+				try {
+					if (input.ready()) {
+						String aaa = input.readLine();
+						System.out.println(aaa);
+						flag = false;
+					}
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					System.out.println("5");
+					e1.printStackTrace();
+				}
+			}
+		}
 	}
+
 }
