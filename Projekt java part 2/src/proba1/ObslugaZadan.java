@@ -91,8 +91,8 @@ public class ObslugaZadan extends Thread {
 			String numerPaczki = odczytWiadomosciOdKlienta();
 			System.out.println(numerPaczki);
 			// SPRAWDZANIE W BAZIE DANYCH paczki
-			Paczka p = new Paczka(1, (float) 12.4, 2, true, "List", true, "a", "b", 1, 2, 31, 333, "lalala", "cacasrea",
-					3, 4, 11, 111);
+			Paczka p = new Paczka(120, (float) 12.4, 2, true, "List", true, "a", "b", 1, 2, "31-333","imieA", "nazwiskoA", "lalala", "cacasrea",
+					3, 4, "11-111","imieN", "nazwiskoN");
 			try {
 				ObjectOutputStream oos = new ObjectOutputStream(connection.getOutputStream());
 				oos.writeObject(p);
@@ -112,10 +112,10 @@ public class ObslugaZadan extends Thread {
 			String wiadomosc = odczytWiadomosciOdKlienta();
 			System.out.println(wiadomosc);
 			Paczka p[] = new Paczka[2];
-			p[0] = new Paczka(1,(float) 12.4, 2, true, "List", true, "a", "b", 1, 2, 31, 333, "lalala", "cacasrea", 3, 4,
-					11, 111);
-			p[1] = new Paczka(2,(float) 12.4, 2, true, "List", true, "a", "b", 1, 2, 31, 333, "lalala", "cacasrea", 3, 4,
-					11, 111);
+			p[0] = new Paczka(120, (float) 12.4, 2, true, "List", true, "a", "b", 1, 2, "31-333", "imieA", "nazwiskoA", "lalala", "cacasrea", 3,
+					4, "11-111", "imieN", "nazwiskoN");
+			p[1] = new Paczka(220, (float) 12.4, 2, true, "List", true, "a", "b", 1, 2, "31-333", "imieN", "nazwiskoN", "lalala", "cacasrea", 3,
+					4, "11-111", "imieN", "nazwiskoN");
 			try {
 				ObjectOutputStream oos = new ObjectOutputStream(connection.getOutputStream());
 				oos.writeObject(p);
@@ -134,19 +134,27 @@ public class ObslugaZadan extends Thread {
 			out.println("hehehehhe");
 			out.flush();
 
-		} else if (komunikat.contains("Powrot")) {
+		} else if (komunikat.contains("Przekazana do nadania") || komunikat.contains("W drodze do miasta adresata")
+				|| komunikat.contains("Odebrana") || komunikat.contains("W punkcie odbioru")
+				|| komunikat.contains("Przekazana do odebrania")) {
+			ustawienieStanu(komunikat);
+		} else if (komunikat.contains("Powrot") || komunikat.contains("Wyloguj")) {
 			out.println(komunikat + " ... OK");
 			out.flush();
-
-		} else if (komunikat.contains("Wyloguj")) {
-			out.println(komunikat + " ... OK");
-			out.flush();
-
 		} else if (komunikat.contains("Wyjscie")) {
 			out.println(komunikat + " ... Exit");
 			out.flush();
 
 		}
+	}
+
+	private void ustawienieStanu(String komunikat) {
+		String id = odczytWiadomosciOdKlienta();
+		int idLiczba = (int) Double.parseDouble(id);
+		// WYSZUKUJEMY W BAZIE DANYCH PACZKI O PODANYM ID
+		// I ZMIENIAMY STAN
+		Paczka p = null;
+	//	p.setStan(komunikat);
 	}
 
 	private String odczytWiadomosciOdKlienta() {

@@ -11,12 +11,11 @@ public class Paczka implements Serializable {
 	private boolean szklo;
 	private String rodzaj;
 	private boolean ekspres;
-	private Dane daneAdresata;
-	private Dane daneNadawcy;
+	private Adresat adresat;
+	private Nadawca nadawca;
 
 	public Paczka(int paczkaID, float koszt,double waga, boolean szklo, String rodzaj, boolean ekspres, String miastoA, String UlicaA, int nrDomA,
-			int nrMieA, int kod1A, int kod2A, String miastoN, String UlicaN, int nrDomN, int nrMieN, int kod1N,
-			int kod2N) {
+			int nrMieA, String kodA,String imieA, String nazwiskoA, String miastoN, String UlicaN, int nrDomN, int nrMieN, String kodN,String imieN, String nazwiskoN) {
 		setStan("Do Odebrania");
 		this.paczkaID = paczkaID;
 		this.koszt = koszt;
@@ -24,16 +23,16 @@ public class Paczka implements Serializable {
 		this.szklo = szklo;
 		this.rodzaj = rodzaj;
 		this.ekspres = ekspres;
-		setDaneAdresata(miastoA, UlicaA, nrDomA, nrMieA, kod1A, kod2A);
-		setDaneNadawcy(miastoN, UlicaN, nrDomN, nrMieN, kod1N, kod2N);
+		setAdresat(miastoA, UlicaA, nrDomA, nrMieA, kodA, imieA, nazwiskoA);
+		setNadawca(miastoN, UlicaN, nrDomN, nrMieN, kodN, imieN, nazwiskoN);
 	}
 	
 
 	@Override
 	public String toString() {
 		return "Numer paczki = " + paczkaID + "\nStan = " + stan + "\nKoszt = " + koszt + "\nWaga = " + waga + "\nSzklo = "
-				+ szklo + "\nRodzaj = " + rodzaj + "\nEkspres = " + ekspres + "\n\nDaneAdresata:" + daneAdresata
-				+ "\n\nDaneNadawcy:" + daneNadawcy + "";
+				+ szklo + "\nRodzaj = " + rodzaj + "\nEkspres = " + ekspres + "\n\nDaneAdresata:" + adresat
+				+ "\n\nDaneNadawcy:" + nadawca + "";
 	}
 
 
@@ -69,19 +68,21 @@ public class Paczka implements Serializable {
 		return ekspres;
 	}
 
-	public Dane getDaneAdresata() {
-		return daneAdresata;
+	public Adresat getAdresat() {
+		return adresat;
 	}
 
-	public void setDaneAdresata(String miastoA, String UlicaA, int nrDomA, int nrMieA, int kod1A, int kod2A) {
-		this.daneAdresata = new Dane(miastoA, UlicaA, nrDomA, nrMieA, kod1A, kod2A);
+
+	public void setAdresat(String miastoA, String UlicaA, int nrDomA, int nrMieA, String kodA, String imieA, String nazwiskoA) {
+		this.adresat = new Adresat(miastoA, UlicaA, nrDomA, nrMieA, kodA, imieA, nazwiskoA);
 	}
 
-	public Dane getDaneNadawcy() {
-		return daneNadawcy;
+	public Nadawca getNadawca() {
+		return nadawca;
 	}
 
-	public void setDaneNadawcy(String miastoN, String UlicaN, int nrDomN, int nrMieN, int kod1N, int kod2N) {
-		this.daneNadawcy = new Dane(miastoN, UlicaN, nrDomN, nrMieN, kod1N, kod2N);
+
+	public void setNadawca(String miastoN, String UlicaN, int nrDomN, int nrMieN, String kodN, String imieN, String nazwiskoN) {
+		this.nadawca = new Nadawca(miastoN, UlicaN, nrDomN, nrMieN, kodN, imieN, nazwiskoN);
 	}
 }

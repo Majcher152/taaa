@@ -6,6 +6,11 @@ import javax.swing.SpringLayout;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.PlainDocument;
+
+import org.jdatepicker.impl.JDatePanelImpl;
+import org.jdatepicker.impl.JDatePickerImpl;
+import org.jdatepicker.impl.UtilDateModel;
+
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -24,6 +29,9 @@ import java.io.InputStreamReader;
 import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Properties;
 import java.awt.event.MouseWheelEvent;
 import javax.swing.ButtonGroup;
 import java.awt.Font;
@@ -42,6 +50,7 @@ import javax.swing.event.ChangeListener;
 import javax.swing.event.ChangeEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.ItemEvent;
+import java.awt.TextField;
 
 public class WyslijPaczke {
 
@@ -79,6 +88,12 @@ public class WyslijPaczke {
 	private JComboBox comboBox_miasto_na;
 	private float[] koszta = new float[4];
 	private float koszt;
+	private JTextField textField;
+	private JTextField textField_1;
+	private JTextField textField_2;
+	private JTextField textField_3;
+	private SpringLayout springLayout_1;
+	private SpringLayout springLayout_2;
 
 	/**
 	 * Create the application.
@@ -99,16 +114,16 @@ public class WyslijPaczke {
 
 	private void ustawienieKosztu(float a, int i) {
 		koszta[i] = a;
-		
+
 		if (koszta[2] != 0)
 			koszt = koszta[0] * koszta[2] + koszta[1] + koszta[3];
 		else
 			koszt = koszta[0] + koszta[1] + koszta[3];
 		koszt *= 100;
 		koszt = Math.round(koszt);
-		koszt /=100;
+		koszt /= 100;
 		textField_koszt.setText(koszt + "");
-		
+
 	}
 
 	/**
@@ -117,7 +132,7 @@ public class WyslijPaczke {
 	private void initialize() {
 		MyActionListener myAction = new MyActionListener();
 		frame = new JFrame();
-		frame.setBounds(100, 100, 500, 641);
+		frame.setBounds(100, 100, 641, 680);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 		JLabel lblWaga = new JLabel("Waga:");
@@ -259,15 +274,16 @@ public class WyslijPaczke {
 		textField_ulica_na.setColumns(10);
 
 		lblKoszt = new JLabel("Koszt:");
-		lblKoszt.setFont(new Font("Tahoma", Font.BOLD, 14));
+		lblKoszt.setFont(new Font("Tahoma", Font.PLAIN, 18));
 		textField_koszt = new JTextField();
 		textField_koszt.setEditable(false);
-		textField_koszt.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		textField_koszt.setFont(new Font("Tahoma", Font.PLAIN, 18));
 		textField_koszt.setColumns(10);
 		JLabel lblZ = new JLabel("z\u0142");
-		lblZ.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		lblZ.setFont(new Font("Tahoma", Font.PLAIN, 18));
 
 		btnZamwKuriera = new JButton("Zamow kuriera");
+		btnZamwKuriera.setFont(new Font("Tahoma", Font.BOLD, 15));
 
 		btnPowrot = new JButton("Powrot");
 
@@ -334,126 +350,129 @@ public class WyslijPaczke {
 				}
 			}
 		});
+		UtilDateModel model = new UtilDateModel();
+		model.setDate(Calendar.DATE, 1, 1);
+		//model.
+	//	model.setValue(Calendar.DATE);
+		Properties prop = new Properties();
+		prop.put("text.today", "Today");
+		prop.put("text.month", "Month");
+		prop.put("text.year", "Year");
+
+		JDatePanelImpl datePanel = new JDatePanelImpl(model, prop);
+		// JDatePanelImpl datePanel = new JDatePanelImpl(model, null);
+
+		JDatePickerImpl datePicker = new JDatePickerImpl(datePanel, new DateLabelFormatter());
+		// JDatePickerImpl datePicker = new JDatePickerImpl(datePanel, null);
+
+		frame.getContentPane().add(datePicker);
 		SpringLayout springLayout = new SpringLayout();
-		springLayout.putConstraint(SpringLayout.WEST, lblZ, 207, SpringLayout.WEST, frame.getContentPane());
-		springLayout.putConstraint(SpringLayout.EAST, textField_koszt, -6, SpringLayout.WEST, lblZ);
-		springLayout.putConstraint(SpringLayout.SOUTH, lblZ, -51, SpringLayout.SOUTH, frame.getContentPane());
-		springLayout.putConstraint(SpringLayout.NORTH, textField_koszt, -3, SpringLayout.NORTH, lblKoszt);
-		springLayout.putConstraint(SpringLayout.WEST, textField_koszt, 8, SpringLayout.EAST, lblKoszt);
-		springLayout.putConstraint(SpringLayout.WEST, lblKoszt, 0, SpringLayout.WEST, textField_ulica_na);
-		springLayout.putConstraint(SpringLayout.SOUTH, lblKoszt, -18, SpringLayout.NORTH, btnZamwKuriera);
-		springLayout.putConstraint(SpringLayout.NORTH, btnPowrot, 0, SpringLayout.NORTH, btnZamwKuriera);
-		springLayout.putConstraint(SpringLayout.EAST, btnPowrot, -10, SpringLayout.EAST, frame.getContentPane());
-		springLayout.putConstraint(SpringLayout.WEST, btnZamwKuriera, 0, SpringLayout.WEST, lblPrzesyka);
-		springLayout.putConstraint(SpringLayout.SOUTH, btnZamwKuriera, -10, SpringLayout.SOUTH, frame.getContentPane());
-		springLayout.putConstraint(SpringLayout.WEST, textField_nr_mie_na, 6, SpringLayout.EAST, lblNrMieszkania_1);
-		springLayout.putConstraint(SpringLayout.EAST, textField_nr_mie_na, -193, SpringLayout.EAST,
-				frame.getContentPane());
-		springLayout.putConstraint(SpringLayout.WEST, textField_nr_mie_ad, 6, SpringLayout.EAST, lblNrMieszkania);
-		springLayout.putConstraint(SpringLayout.EAST, textField_nr_mie_ad, -193, SpringLayout.EAST,
-				frame.getContentPane());
-		springLayout.putConstraint(SpringLayout.NORTH, textField_nr_mie_na, -3, SpringLayout.NORTH, lblNrDomu);
-		springLayout.putConstraint(SpringLayout.WEST, lblNrMieszkania_1, 171, SpringLayout.WEST,
-				frame.getContentPane());
-		springLayout.putConstraint(SpringLayout.SOUTH, chckbx_mie_na, 0, SpringLayout.SOUTH, lblNrDomu);
-		springLayout.putConstraint(SpringLayout.EAST, chckbx_mie_na, -6, SpringLayout.WEST, lblNrMieszkania_1);
-		springLayout.putConstraint(SpringLayout.NORTH, lblNrMieszkania_1, 0, SpringLayout.NORTH, lblNrDomu);
-		springLayout.putConstraint(SpringLayout.WEST, rdbtnZwyka, 12, SpringLayout.EAST, rdbtnEkspresowa);
-		springLayout.putConstraint(SpringLayout.NORTH, lblNrMieszkania, 0, SpringLayout.NORTH, lblNrDomuI);
-		springLayout.putConstraint(SpringLayout.WEST, lblNrMieszkania, 6, SpringLayout.EAST, chckbx_mie_ad);
-		springLayout.putConstraint(SpringLayout.SOUTH, lblNrMieszkania, 280, SpringLayout.NORTH,
-				frame.getContentPane());
-		springLayout.putConstraint(SpringLayout.NORTH, chckbx_mie_ad, 0, SpringLayout.NORTH, lblNrDomuI);
-		springLayout.putConstraint(SpringLayout.WEST, chckbx_mie_ad, 0, SpringLayout.WEST, lblKg);
-		springLayout.putConstraint(SpringLayout.NORTH, textField_waga, -3, SpringLayout.NORTH, lblWaga);
-		springLayout.putConstraint(SpringLayout.WEST, textField_waga, 0, SpringLayout.WEST, textField_ulica_na);
-		springLayout.putConstraint(SpringLayout.EAST, textField_waga, 138, SpringLayout.WEST, frame.getContentPane());
-		springLayout.putConstraint(SpringLayout.NORTH, textField_kod_ad1, -3, SpringLayout.NORTH, lblNewLabel);
-		springLayout.putConstraint(SpringLayout.WEST, textField_kod_ad1, 6, SpringLayout.EAST, label);
-		springLayout.putConstraint(SpringLayout.EAST, textField_kod_ad1, 0, SpringLayout.EAST, textField_kod_na1);
-		springLayout.putConstraint(SpringLayout.WEST, lblKg, 102, SpringLayout.EAST, lblWaga);
-		springLayout.putConstraint(SpringLayout.WEST, textField_kod_na1, 2, SpringLayout.EAST, label_1);
-		springLayout.putConstraint(SpringLayout.EAST, textField_kod_na1, -333, SpringLayout.EAST,
-				frame.getContentPane());
-		springLayout.putConstraint(SpringLayout.NORTH, textField_kod_na1, -3, SpringLayout.NORTH, lblKodPocztowy);
+		springLayout.putConstraint(SpringLayout.NORTH, textField_koszt, 63, SpringLayout.SOUTH, textField_kod_ad1);
+		springLayout.putConstraint(SpringLayout.WEST, textField_koszt, 12, SpringLayout.EAST, lblKoszt);
+		springLayout.putConstraint(SpringLayout.EAST, textField_koszt, -441, SpringLayout.EAST, frame.getContentPane());
+		springLayout.putConstraint(SpringLayout.NORTH, lblZ, 3, SpringLayout.NORTH, textField_koszt);
+		springLayout.putConstraint(SpringLayout.WEST, lblZ, 6, SpringLayout.EAST, textField_koszt);
+		springLayout.putConstraint(SpringLayout.NORTH, btnZamwKuriera, 24, SpringLayout.SOUTH, textField_koszt);
+		springLayout.putConstraint(SpringLayout.WEST, btnZamwKuriera, 0, SpringLayout.WEST, lblKoszt);
+		springLayout.putConstraint(SpringLayout.SOUTH, btnZamwKuriera, -61, SpringLayout.NORTH, btnPowrot);
+		springLayout.putConstraint(SpringLayout.EAST, btnZamwKuriera, -398, SpringLayout.EAST, frame.getContentPane());
+		springLayout.putConstraint(SpringLayout.NORTH, lblKoszt, 3, SpringLayout.NORTH, textField_koszt);
+		springLayout.putConstraint(SpringLayout.EAST, lblKoszt, 0, SpringLayout.EAST, textField_kod_ad);
+		springLayout.putConstraint(SpringLayout.WEST, btnPowrot, 0, SpringLayout.WEST, lblPrzesyka);
+		springLayout.putConstraint(SpringLayout.SOUTH, btnPowrot, -10, SpringLayout.SOUTH, frame.getContentPane());
+		springLayout.putConstraint(SpringLayout.NORTH, datePicker, 40, SpringLayout.SOUTH, textField_kod_na);
+		springLayout.putConstraint(SpringLayout.EAST, datePicker, -116, SpringLayout.EAST, frame.getContentPane());
+		springLayout.putConstraint(SpringLayout.NORTH, textField_kod_ad1, -3, SpringLayout.NORTH, lblKodPocztowy);
+		springLayout.putConstraint(SpringLayout.WEST, textField_kod_ad1, 7, SpringLayout.EAST, label);
+		springLayout.putConstraint(SpringLayout.EAST, textField_kod_ad1, 0, SpringLayout.EAST, chckbxTak);
+		springLayout.putConstraint(SpringLayout.WEST, textField_nr_dom_na, 0, SpringLayout.WEST, textField_ulica_na);
+		springLayout.putConstraint(SpringLayout.NORTH, textField_nr_dom_ad, 2, SpringLayout.NORTH, lblNrDomuI);
+		springLayout.putConstraint(SpringLayout.WEST, textField_nr_dom_ad, 0, SpringLayout.WEST, textField_kod_ad);
+		springLayout.putConstraint(SpringLayout.EAST, textField_nr_dom_ad, 0, SpringLayout.EAST, textField_kod_ad);
+		springLayout.putConstraint(SpringLayout.WEST, rdbtnPaczka, 17, SpringLayout.EAST, rdbtnList);
 		springLayout.putConstraint(SpringLayout.NORTH, rdbtnZwyka, -4, SpringLayout.NORTH, lblPrzesyka);
-		springLayout.putConstraint(SpringLayout.NORTH, rdbtnCosInnego, 0, SpringLayout.NORTH, rdbtnList);
-		springLayout.putConstraint(SpringLayout.WEST, rdbtnCosInnego, 9, SpringLayout.EAST, rdbtnPaczka);
-		springLayout.putConstraint(SpringLayout.NORTH, rdbtnPaczka, 0, SpringLayout.NORTH, rdbtnList);
-		springLayout.putConstraint(SpringLayout.WEST, rdbtnPaczka, 6, SpringLayout.EAST, rdbtnList);
+		springLayout.putConstraint(SpringLayout.WEST, rdbtnZwyka, 39, SpringLayout.EAST, rdbtnEkspresowa);
+		springLayout.putConstraint(SpringLayout.NORTH, rdbtnCosInnego, -4, SpringLayout.NORTH, lblRodzaj);
+		springLayout.putConstraint(SpringLayout.WEST, rdbtnCosInnego, 19, SpringLayout.EAST, rdbtnPaczka);
+		springLayout.putConstraint(SpringLayout.WEST, textField_waga, 85, SpringLayout.EAST, lblWaga);
+		springLayout.putConstraint(SpringLayout.EAST, textField_waga, -455, SpringLayout.EAST, frame.getContentPane());
 		springLayout.putConstraint(SpringLayout.NORTH, lblKg, 0, SpringLayout.NORTH, lblWaga);
-		springLayout.putConstraint(SpringLayout.NORTH, label, 0, SpringLayout.NORTH, lblNewLabel);
-		springLayout.putConstraint(SpringLayout.WEST, label, 0, SpringLayout.WEST, label_1);
+		springLayout.putConstraint(SpringLayout.WEST, lblKg, 6, SpringLayout.EAST, textField_waga);
+		springLayout.putConstraint(SpringLayout.NORTH, textField_waga, -3, SpringLayout.NORTH, lblWaga);
+		springLayout.putConstraint(SpringLayout.NORTH, chckbxTak, -4, SpringLayout.NORTH, lblSzklo);
+		springLayout.putConstraint(SpringLayout.WEST, chckbxTak, 0, SpringLayout.WEST, rdbtnList);
+		springLayout.putConstraint(SpringLayout.NORTH, lblDaneAdresata, 16, SpringLayout.SOUTH, rdbtnEkspresowa);
+		springLayout.putConstraint(SpringLayout.NORTH, rdbtnEkspresowa, -4, SpringLayout.NORTH, lblPrzesyka);
+		springLayout.putConstraint(SpringLayout.WEST, rdbtnEkspresowa, 0, SpringLayout.WEST, rdbtnList);
+		springLayout.putConstraint(SpringLayout.NORTH, rdbtnList, -4, SpringLayout.NORTH, lblRodzaj);
+		springLayout.putConstraint(SpringLayout.WEST, rdbtnList, 0, SpringLayout.WEST, label);
+		springLayout.putConstraint(SpringLayout.NORTH, rdbtnPaczka, -4, SpringLayout.NORTH, lblRodzaj);
+		springLayout.putConstraint(SpringLayout.NORTH, lblDaneNadawcy, 0, SpringLayout.NORTH, lblDaneAdresata);
+		springLayout.putConstraint(SpringLayout.EAST, lblDaneNadawcy, -76, SpringLayout.EAST, frame.getContentPane());
+		springLayout.putConstraint(SpringLayout.NORTH, textField_kod_na1, -3, SpringLayout.NORTH, lblKodPocztowy);
+		springLayout.putConstraint(SpringLayout.WEST, textField_kod_na1, 456, SpringLayout.WEST,
+				frame.getContentPane());
+		springLayout.putConstraint(SpringLayout.EAST, textField_kod_na1, 0, SpringLayout.EAST, chckbx_mie_na);
+		springLayout.putConstraint(SpringLayout.WEST, label, 127, SpringLayout.WEST, frame.getContentPane());
 		springLayout.putConstraint(SpringLayout.NORTH, label_1, 0, SpringLayout.NORTH, lblKodPocztowy);
-		springLayout.putConstraint(SpringLayout.EAST, label_1, 0, SpringLayout.EAST, textField_nr_dom_na);
+		springLayout.putConstraint(SpringLayout.WEST, label_1, 6, SpringLayout.EAST, textField_kod_na);
 		springLayout.putConstraint(SpringLayout.NORTH, textField_kod_na, -3, SpringLayout.NORTH, lblKodPocztowy);
 		springLayout.putConstraint(SpringLayout.WEST, textField_kod_na, 0, SpringLayout.WEST, textField_ulica_na);
-		springLayout.putConstraint(SpringLayout.EAST, textField_kod_na, 115, SpringLayout.WEST, frame.getContentPane());
-		springLayout.putConstraint(SpringLayout.WEST, comboBox_miasto_na, 50, SpringLayout.EAST, lblMiasto_1);
-		springLayout.putConstraint(SpringLayout.EAST, comboBox_miasto_na, -193, SpringLayout.EAST,
+		springLayout.putConstraint(SpringLayout.EAST, textField_kod_na, -181, SpringLayout.EAST,
 				frame.getContentPane());
-		springLayout.putConstraint(SpringLayout.WEST, textField_ulica_na, 59, SpringLayout.EAST, lblUlica_1);
-		springLayout.putConstraint(SpringLayout.EAST, textField_ulica_na, -193, SpringLayout.EAST,
+		springLayout.putConstraint(SpringLayout.NORTH, chckbx_mie_na, 0, SpringLayout.NORTH, lblNrDomuI);
+		springLayout.putConstraint(SpringLayout.EAST, chckbx_mie_na, -6, SpringLayout.WEST, lblNrMieszkania_1);
+		springLayout.putConstraint(SpringLayout.WEST, textField_nr_mie_na, 569, SpringLayout.WEST,
 				frame.getContentPane());
-		springLayout.putConstraint(SpringLayout.NORTH, textField_nr_dom_na, -3, SpringLayout.NORTH, lblNrDomu);
-		springLayout.putConstraint(SpringLayout.WEST, textField_nr_dom_na, 0, SpringLayout.WEST, textField_ulica_na);
-		springLayout.putConstraint(SpringLayout.EAST, textField_nr_dom_na, 121, SpringLayout.WEST,
+		springLayout.putConstraint(SpringLayout.WEST, lblNrMieszkania, 6, SpringLayout.EAST, chckbx_mie_ad);
+		springLayout.putConstraint(SpringLayout.WEST, lblDaneAdresata, 165, SpringLayout.WEST, frame.getContentPane());
+		springLayout.putConstraint(SpringLayout.EAST, textField_nr_mie_na, -10, SpringLayout.EAST,
 				frame.getContentPane());
-		springLayout.putConstraint(SpringLayout.SOUTH, textField_ulica_na, 0, SpringLayout.SOUTH, lblUlica_1);
-		springLayout.putConstraint(SpringLayout.SOUTH, lblDaneNadawcy, -21, SpringLayout.NORTH, comboBox_miasto_na);
-		springLayout.putConstraint(SpringLayout.NORTH, comboBox_miasto_na, -3, SpringLayout.NORTH, lblMiasto_1);
-		springLayout.putConstraint(SpringLayout.WEST, lblDaneNadawcy, 0, SpringLayout.WEST, lblDaneAdresata);
-		springLayout.putConstraint(SpringLayout.NORTH, comboBox_miasto_ad, 180, SpringLayout.NORTH,
+		springLayout.putConstraint(SpringLayout.NORTH, lblNrMieszkania_1, 5, SpringLayout.NORTH, lblNrDomuI);
+		springLayout.putConstraint(SpringLayout.EAST, lblNrMieszkania_1, -6, SpringLayout.WEST, textField_nr_mie_na);
+		springLayout.putConstraint(SpringLayout.WEST, textField_nr_mie_ad, 6, SpringLayout.EAST, lblNrMieszkania);
+		springLayout.putConstraint(SpringLayout.EAST, textField_nr_mie_ad, -52, SpringLayout.WEST, lblNrDomu);
+		springLayout.putConstraint(SpringLayout.NORTH, textField_nr_mie_na, 2, SpringLayout.NORTH, lblNrDomuI);
+		springLayout.putConstraint(SpringLayout.WEST, chckbx_mie_ad, 144, SpringLayout.WEST, frame.getContentPane());
+		springLayout.putConstraint(SpringLayout.EAST, textField_nr_dom_na, -181, SpringLayout.EAST,
 				frame.getContentPane());
-		springLayout.putConstraint(SpringLayout.WEST, comboBox_miasto_ad, 95, SpringLayout.WEST,
+		springLayout.putConstraint(SpringLayout.NORTH, textField_nr_dom_na, 2, SpringLayout.NORTH, lblNrDomuI);
+		springLayout.putConstraint(SpringLayout.WEST, comboBox_miasto_ad, 50, SpringLayout.EAST, lblMiasto);
+		springLayout.putConstraint(SpringLayout.EAST, comboBox_miasto_ad, -42, SpringLayout.WEST, lblMiasto_1);
+		springLayout.putConstraint(SpringLayout.WEST, textField_ulica_ad, 59, SpringLayout.EAST, lblUlica);
+		springLayout.putConstraint(SpringLayout.EAST, textField_ulica_ad, -42, SpringLayout.WEST, lblUlica_1);
+		springLayout.putConstraint(SpringLayout.WEST, textField_kod_ad, 14, SpringLayout.EAST, lblNewLabel);
+		springLayout.putConstraint(SpringLayout.EAST, textField_kod_ad, -6, SpringLayout.WEST, label);
+		springLayout.putConstraint(SpringLayout.NORTH, textField_ulica_na, -3, SpringLayout.NORTH, lblUlica_1);
+		springLayout.putConstraint(SpringLayout.WEST, textField_ulica_na, 418, SpringLayout.WEST,
 				frame.getContentPane());
-		springLayout.putConstraint(SpringLayout.EAST, comboBox_miasto_ad, 289, SpringLayout.WEST,
+		springLayout.putConstraint(SpringLayout.EAST, textField_ulica_na, 0, SpringLayout.EAST, comboBox_miasto_na);
+		springLayout.putConstraint(SpringLayout.NORTH, comboBox_miasto_na, -3, SpringLayout.NORTH, lblMiasto);
+		springLayout.putConstraint(SpringLayout.EAST, comboBox_miasto_na, -10, SpringLayout.EAST,
 				frame.getContentPane());
-		springLayout.putConstraint(SpringLayout.NORTH, textField_ulica_ad, 217, SpringLayout.NORTH,
-				frame.getContentPane());
-		springLayout.putConstraint(SpringLayout.WEST, textField_ulica_ad, 95, SpringLayout.WEST,
-				frame.getContentPane());
-		springLayout.putConstraint(SpringLayout.EAST, textField_ulica_ad, 289, SpringLayout.WEST,
-				frame.getContentPane());
-		springLayout.putConstraint(SpringLayout.NORTH, textField_nr_mie_ad, 257, SpringLayout.NORTH,
-				frame.getContentPane());
-		springLayout.putConstraint(SpringLayout.NORTH, textField_nr_dom_ad, 257, SpringLayout.NORTH,
-				frame.getContentPane());
-		springLayout.putConstraint(SpringLayout.WEST, textField_nr_dom_ad, 95, SpringLayout.WEST,
-				frame.getContentPane());
-		springLayout.putConstraint(SpringLayout.EAST, textField_nr_dom_ad, 121, SpringLayout.WEST,
-				frame.getContentPane());
-		springLayout.putConstraint(SpringLayout.NORTH, textField_kod_ad, 289, SpringLayout.NORTH,
-				frame.getContentPane());
-		springLayout.putConstraint(SpringLayout.WEST, textField_kod_ad, 95, SpringLayout.WEST, frame.getContentPane());
-		springLayout.putConstraint(SpringLayout.EAST, textField_kod_ad, 115, SpringLayout.WEST, frame.getContentPane());
-		springLayout.putConstraint(SpringLayout.NORTH, rdbtnEkspresowa, 109, SpringLayout.NORTH,
-				frame.getContentPane());
-		springLayout.putConstraint(SpringLayout.WEST, rdbtnEkspresowa, 95, SpringLayout.WEST, frame.getContentPane());
-		springLayout.putConstraint(SpringLayout.NORTH, lblDaneAdresata, 150, SpringLayout.NORTH,
-				frame.getContentPane());
-		springLayout.putConstraint(SpringLayout.WEST, lblDaneAdresata, 190, SpringLayout.WEST, frame.getContentPane());
-		springLayout.putConstraint(SpringLayout.NORTH, rdbtnList, 78, SpringLayout.NORTH, frame.getContentPane());
-		springLayout.putConstraint(SpringLayout.WEST, rdbtnList, 95, SpringLayout.WEST, frame.getContentPane());
-		springLayout.putConstraint(SpringLayout.NORTH, chckbxTak, 50, SpringLayout.NORTH, frame.getContentPane());
-		springLayout.putConstraint(SpringLayout.WEST, chckbxTak, 95, SpringLayout.WEST, frame.getContentPane());
-		springLayout.putConstraint(SpringLayout.NORTH, lblNewLabel, 292, SpringLayout.NORTH, frame.getContentPane());
-		springLayout.putConstraint(SpringLayout.WEST, lblNewLabel, 10, SpringLayout.WEST, frame.getContentPane());
-		springLayout.putConstraint(SpringLayout.NORTH, lblKodPocztowy, 490, SpringLayout.NORTH, frame.getContentPane());
-		springLayout.putConstraint(SpringLayout.WEST, lblKodPocztowy, 10, SpringLayout.WEST, frame.getContentPane());
-		springLayout.putConstraint(SpringLayout.NORTH, lblNrDomu, 452, SpringLayout.NORTH, frame.getContentPane());
-		springLayout.putConstraint(SpringLayout.WEST, lblNrDomu, 10, SpringLayout.WEST, frame.getContentPane());
-		springLayout.putConstraint(SpringLayout.NORTH, lblMiasto_1, 370, SpringLayout.NORTH, frame.getContentPane());
-		springLayout.putConstraint(SpringLayout.WEST, lblMiasto_1, 10, SpringLayout.WEST, frame.getContentPane());
-		springLayout.putConstraint(SpringLayout.NORTH, lblNrDomuI, 255, SpringLayout.NORTH, frame.getContentPane());
-		springLayout.putConstraint(SpringLayout.WEST, lblNrDomuI, 10, SpringLayout.WEST, frame.getContentPane());
-		springLayout.putConstraint(SpringLayout.SOUTH, lblNrDomuI, 280, SpringLayout.NORTH, frame.getContentPane());
-		springLayout.putConstraint(SpringLayout.NORTH, lblUlica, 220, SpringLayout.NORTH, frame.getContentPane());
-		springLayout.putConstraint(SpringLayout.WEST, lblUlica, 10, SpringLayout.WEST, frame.getContentPane());
-		springLayout.putConstraint(SpringLayout.NORTH, lblMiasto, 183, SpringLayout.NORTH, frame.getContentPane());
-		springLayout.putConstraint(SpringLayout.WEST, lblMiasto, 10, SpringLayout.WEST, frame.getContentPane());
-		springLayout.putConstraint(SpringLayout.NORTH, lblUlica_1, 413, SpringLayout.NORTH, frame.getContentPane());
-		springLayout.putConstraint(SpringLayout.WEST, lblUlica_1, 10, SpringLayout.WEST, frame.getContentPane());
+		springLayout.putConstraint(SpringLayout.NORTH, lblKodPocztowy, 0, SpringLayout.NORTH, lblNewLabel);
+		springLayout.putConstraint(SpringLayout.WEST, lblKodPocztowy, 0, SpringLayout.WEST, lblUlica_1);
+		springLayout.putConstraint(SpringLayout.NORTH, lblNrDomu, 5, SpringLayout.NORTH, lblNrDomuI);
+		springLayout.putConstraint(SpringLayout.WEST, lblNrDomu, 0, SpringLayout.WEST, lblUlica_1);
+		springLayout.putConstraint(SpringLayout.NORTH, lblUlica_1, 0, SpringLayout.NORTH, lblUlica);
+		springLayout.putConstraint(SpringLayout.WEST, lblUlica_1, 0, SpringLayout.WEST, lblMiasto_1);
+		springLayout.putConstraint(SpringLayout.NORTH, lblMiasto_1, 0, SpringLayout.NORTH, lblMiasto);
+		springLayout.putConstraint(SpringLayout.SOUTH, lblMiasto, -23, SpringLayout.NORTH, lblUlica);
+		springLayout.putConstraint(SpringLayout.NORTH, comboBox_miasto_ad, -3, SpringLayout.NORTH, lblMiasto);
+		springLayout.putConstraint(SpringLayout.WEST, lblMiasto, 0, SpringLayout.WEST, lblPrzesyka);
+		springLayout.putConstraint(SpringLayout.NORTH, textField_ulica_ad, -3, SpringLayout.NORTH, lblUlica);
+		springLayout.putConstraint(SpringLayout.NORTH, lblNrDomuI, 324, SpringLayout.NORTH, frame.getContentPane());
+		springLayout.putConstraint(SpringLayout.SOUTH, lblNrDomuI, -17, SpringLayout.NORTH, lblNewLabel);
+		springLayout.putConstraint(SpringLayout.WEST, lblUlica, 0, SpringLayout.WEST, lblPrzesyka);
+		springLayout.putConstraint(SpringLayout.SOUTH, lblUlica, -17, SpringLayout.NORTH, lblNrDomuI);
+		springLayout.putConstraint(SpringLayout.NORTH, chckbx_mie_ad, 0, SpringLayout.NORTH, lblNrDomuI);
+		springLayout.putConstraint(SpringLayout.NORTH, textField_nr_mie_ad, 2, SpringLayout.NORTH, lblNrDomuI);
+		springLayout.putConstraint(SpringLayout.NORTH, lblNrMieszkania, 5, SpringLayout.NORTH, lblNrDomuI);
+		springLayout.putConstraint(SpringLayout.NORTH, label, 0, SpringLayout.NORTH, lblNewLabel);
+		springLayout.putConstraint(SpringLayout.NORTH, textField_kod_ad, -3, SpringLayout.NORTH, lblNewLabel);
+		springLayout.putConstraint(SpringLayout.NORTH, lblNewLabel, 366, SpringLayout.NORTH, frame.getContentPane());
+		springLayout.putConstraint(SpringLayout.WEST, lblNrDomuI, 0, SpringLayout.WEST, lblPrzesyka);
+		springLayout.putConstraint(SpringLayout.WEST, lblNewLabel, 0, SpringLayout.WEST, lblPrzesyka);
 		springLayout.putConstraint(SpringLayout.NORTH, lblRodzaj, 80, SpringLayout.NORTH, frame.getContentPane());
 		springLayout.putConstraint(SpringLayout.WEST, lblRodzaj, 10, SpringLayout.WEST, frame.getContentPane());
 		springLayout.putConstraint(SpringLayout.NORTH, lblSzklo, 54, SpringLayout.NORTH, frame.getContentPane());
@@ -508,6 +527,56 @@ public class WyslijPaczke {
 		frame.getContentPane().add(textField_koszt);
 		frame.getContentPane().add(lblZ);
 		frame.getContentPane().add(lblKoszt);
+
+		JLabel lblNazwisko = new JLabel("Nazwisko:");
+		springLayout.putConstraint(SpringLayout.WEST, lblMiasto_1, 0, SpringLayout.WEST, lblNazwisko);
+		frame.getContentPane().add(lblNazwisko);
+
+		JLabel lblImie = new JLabel("Imie:");
+		springLayout.putConstraint(SpringLayout.WEST, lblNazwisko, 0, SpringLayout.WEST, lblImie);
+		frame.getContentPane().add(lblImie);
+
+		textField = new JTextField();
+		springLayout.putConstraint(SpringLayout.WEST, textField, 36, SpringLayout.EAST, lblNazwisko);
+		springLayout.putConstraint(SpringLayout.EAST, textField, -10, SpringLayout.EAST, frame.getContentPane());
+		springLayout.putConstraint(SpringLayout.WEST, comboBox_miasto_na, 0, SpringLayout.WEST, textField);
+		springLayout.putConstraint(SpringLayout.NORTH, textField, -3, SpringLayout.NORTH, lblNazwisko);
+		frame.getContentPane().add(textField);
+		textField.setColumns(10);
+
+		textField_1 = new JTextField();
+		springLayout.putConstraint(SpringLayout.NORTH, textField_1, -3, SpringLayout.NORTH, lblImie);
+		springLayout.putConstraint(SpringLayout.WEST, textField_1, 60, SpringLayout.EAST, lblImie);
+		springLayout.putConstraint(SpringLayout.EAST, textField_1, -10, SpringLayout.EAST, frame.getContentPane());
+		frame.getContentPane().add(textField_1);
+		textField_1.setColumns(10);
+
+		JLabel lblNazwisko_1 = new JLabel("Nazwisko:");
+		springLayout.putConstraint(SpringLayout.NORTH, lblNazwisko, 0, SpringLayout.NORTH, lblNazwisko_1);
+		springLayout.putConstraint(SpringLayout.WEST, lblNazwisko_1, 0, SpringLayout.WEST, lblPrzesyka);
+		springLayout.putConstraint(SpringLayout.SOUTH, lblNazwisko_1, -22, SpringLayout.NORTH, lblMiasto);
+		frame.getContentPane().add(lblNazwisko_1);
+
+		JLabel lblImie_1 = new JLabel("Imie:");
+		springLayout.putConstraint(SpringLayout.NORTH, lblImie, 0, SpringLayout.NORTH, lblImie_1);
+		springLayout.putConstraint(SpringLayout.WEST, lblImie_1, 0, SpringLayout.WEST, lblPrzesyka);
+		frame.getContentPane().add(lblImie_1);
+
+		textField_2 = new JTextField();
+		springLayout.putConstraint(SpringLayout.NORTH, textField_2, -3, SpringLayout.NORTH, lblNazwisko_1);
+		springLayout.putConstraint(SpringLayout.WEST, textField_2, 0, SpringLayout.WEST, textField_kod_ad);
+		springLayout.putConstraint(SpringLayout.EAST, textField_2, -42, SpringLayout.WEST, lblNazwisko);
+		frame.getContentPane().add(textField_2);
+		textField_2.setColumns(10);
+
+		textField_3 = new JTextField();
+		springLayout.putConstraint(SpringLayout.WEST, textField_3, 61, SpringLayout.EAST, lblImie_1);
+		springLayout.putConstraint(SpringLayout.SOUTH, textField_3, -17, SpringLayout.NORTH, textField_2);
+		springLayout.putConstraint(SpringLayout.EAST, textField_3, -333, SpringLayout.EAST, frame.getContentPane());
+		springLayout.putConstraint(SpringLayout.WEST, lblImie, 42, SpringLayout.EAST, textField_3);
+		springLayout.putConstraint(SpringLayout.NORTH, lblImie_1, 3, SpringLayout.NORTH, textField_3);
+		frame.getContentPane().add(textField_3);
+		textField_3.setColumns(10);
 		btnPowrot.addActionListener(myAction);
 		btnZamwKuriera.addActionListener(myAction);
 
@@ -552,12 +621,17 @@ public class WyslijPaczke {
 				else {
 					String mess = "Wyslij Paczke";
 					io(output, input, mess);
+					String kodAd = kod1Ad + "-" + kod2Ad;
+					String kodNa = kod1Na + "-" + kod2Na;
 					int paczka_ID = (int) Double.parseDouble(odczytWiadomosciOdSerwera());
-					Paczka p = new Paczka(paczka_ID,koszt,wagaWartosc, chckbxTak.isSelected(), rodzaj, rdbtnEkspresowa.isSelected(),
-							(String) comboBox_miasto_ad.getSelectedItem(), textField_ulica_ad.getText(), domAd, mieAd,
-							kod1Ad, kod2Ad, (String) comboBox_miasto_na.getSelectedItem(), textField_ulica_na.getText(),
-							domNa, mieNa, kod1Na, kod2Na);
+					Paczka p = new Paczka(paczka_ID, koszt, wagaWartosc, chckbxTak.isSelected(), rodzaj,
+							rdbtnEkspresowa.isSelected(), (String) comboBox_miasto_ad.getSelectedItem(),
+							textField_ulica_ad.getText(), domAd, mieAd, kodAd, "imieA", "nazwiskoA",
+							(String) comboBox_miasto_na.getSelectedItem(), textField_ulica_na.getText(), domNa, mieNa,
+							kodNa, "imieN", "nazwiskoN");
 					JOptionPane.showMessageDialog(null, p.toString());
+					JOptionPane.showMessageDialog(null,
+							"Prosze zapisac numer przesylki!\nNumer przesylki: " + p.getPaczkaID());
 					ObjectOutputStream oos;
 					try {
 						oos = new ObjectOutputStream(socket.getOutputStream());
@@ -582,6 +656,7 @@ public class WyslijPaczke {
 				}
 			}
 		}
+
 		private String odczytWiadomosciOdSerwera() {
 			boolean flagWiadomoscOdSerwera = true;
 			String wiadomoscOdSerwera = null;
@@ -603,6 +678,7 @@ public class WyslijPaczke {
 			}
 			return wiadomoscOdSerwera;
 		}
+
 		private void ustawienieInputOutput() {
 			try {
 				output = new PrintWriter(socket.getOutputStream(), true);
@@ -818,5 +894,4 @@ public class WyslijPaczke {
 			}
 		}
 	}
-
 }

@@ -43,8 +43,8 @@ public class ZalogujKurier {
 	private Socket socket = null;
 	private boolean flag = true;
 	private JList list;
-	
-	
+	private Paczka p[];
+
 	public ZalogujKurier(String login, Socket socket) {
 		this.login = login;
 		this.socket = socket;
@@ -70,7 +70,6 @@ public class ZalogujKurier {
 		ustawienieInputOutput();
 		output.println("Jestesmy w Zaloguj Kurier");
 		output.flush();
-		Paczka p[] = null;
 		try {
 			ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
 			p = (Paczka[]) ois.readObject();
@@ -79,12 +78,16 @@ public class ZalogujKurier {
 			e1.printStackTrace();
 		}
 		String[] nazwy = new String[p.length];
-		for ( int i = 0;i<p.length;i++)
-		{
+		for (int i = 0; i < p.length; i++) {
 			nazwy[i] = p[i].getKoszt() + "";
 		}
-		
+
 		frame = new JFrame();
+		frame.addFocusListener(new FocusAdapter() {
+			@Override
+			public void focusLost(FocusEvent arg0) {
+			}
+		});
 		frame.setBounds(100, 100, 600, 400);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		SpringLayout springLayout = new SpringLayout();
@@ -106,17 +109,17 @@ public class ZalogujKurier {
 
 		JComboBox comboBox = new JComboBox();
 
-
-		comboBox.setModel(new DefaultComboBoxModel(new String[] {"","Do odebrania", "Do dostarczenia"}));
+		comboBox.setModel(new DefaultComboBoxModel(new String[] { "", "Do odebrania", "Do dostarczenia" }));
 		comboBox.setSelectedIndex(0);
 		comboBox.addItemListener(new ItemListener() {
 			public void itemStateChanged(ItemEvent arg0) {
 				comboBox.removeItem("");
 				if (comboBox.getSelectedItem().toString().contains("Do odebrania")) {
 					list.setModel(new AbstractListModel() {
-						
+
 						String[] values = nazwy;
-					//	String[] values = new String[] { "aa", "bb", "2", "4", "5", "6" };
+						// String[] values = new String[] { "aa", "bb", "2",
+						// "4", "5", "6" };
 
 						public int getSize() {
 							return values.length;
@@ -142,58 +145,48 @@ public class ZalogujKurier {
 				}
 			}
 		});
-		
 
 		JLabel lblPrzesylka = new JLabel("Przesylki:");
 
 		JScrollPane scrollPane = new JScrollPane();
-		
-				JTextArea textArea = new JTextArea();
-				springLayout.putConstraint(SpringLayout.EAST, textArea, -72, SpringLayout.EAST, frame.getContentPane());
-				
-						// textArea.setText(login + " " + haslo.toString());
-						textArea.setText(login + " ");
-						springLayout.putConstraint(SpringLayout.SOUTH, textArea, -291, SpringLayout.NORTH, btnWyloguj);
-						springLayout.putConstraint(SpringLayout.NORTH, textArea, 0, SpringLayout.NORTH, panel);
-						springLayout.putConstraint(SpringLayout.WEST, textArea, 6, SpringLayout.EAST, panel);
+
+		JTextArea textArea = new JTextArea();
+		springLayout.putConstraint(SpringLayout.EAST, textArea, -72, SpringLayout.EAST, frame.getContentPane());
+
+		// textArea.setText(login + " " + haslo.toString());
+		textArea.setText(login + " ");
+		springLayout.putConstraint(SpringLayout.SOUTH, textArea, -291, SpringLayout.NORTH, btnWyloguj);
+		springLayout.putConstraint(SpringLayout.NORTH, textArea, 0, SpringLayout.NORTH, panel);
+		springLayout.putConstraint(SpringLayout.WEST, textArea, 6, SpringLayout.EAST, panel);
 		GroupLayout gl_panel = new GroupLayout(panel);
-		gl_panel.setHorizontalGroup(
-			gl_panel.createParallelGroup(Alignment.LEADING)
-				.addGroup(gl_panel.createSequentialGroup()
-					.addGroup(gl_panel.createParallelGroup(Alignment.LEADING)
-						.addGroup(gl_panel.createSequentialGroup()
-							.addGap(3)
-							.addComponent(lblPrzesylka)
-							.addGap(18)
-							.addComponent(comboBox, GroupLayout.PREFERRED_SIZE, 105, GroupLayout.PREFERRED_SIZE)
-							.addPreferredGap(ComponentPlacement.RELATED, 166, Short.MAX_VALUE)
-							.addComponent(textArea, GroupLayout.PREFERRED_SIZE, 71, GroupLayout.PREFERRED_SIZE))
-						.addGroup(gl_panel.createSequentialGroup()
-							.addContainerGap()
-							.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 398, Short.MAX_VALUE)))
-					.addGap(0))
-		);
-		gl_panel.setVerticalGroup(
-			gl_panel.createParallelGroup(Alignment.LEADING)
-				.addGroup(gl_panel.createSequentialGroup()
-					.addGroup(gl_panel.createParallelGroup(Alignment.LEADING)
-						.addGroup(gl_panel.createSequentialGroup()
-							.addContainerGap()
-							.addGroup(gl_panel.createParallelGroup(Alignment.BASELINE)
-								.addComponent(comboBox, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-								.addComponent(lblPrzesylka)))
+		gl_panel.setHorizontalGroup(gl_panel.createParallelGroup(Alignment.LEADING)
+				.addGroup(gl_panel.createSequentialGroup().addGroup(gl_panel.createParallelGroup(Alignment.LEADING)
+						.addGroup(gl_panel.createSequentialGroup().addGap(3).addComponent(lblPrzesylka).addGap(18)
+								.addComponent(comboBox, GroupLayout.PREFERRED_SIZE, 105, GroupLayout.PREFERRED_SIZE)
+								.addPreferredGap(ComponentPlacement.RELATED, 166, Short.MAX_VALUE)
+								.addComponent(textArea, GroupLayout.PREFERRED_SIZE, 71, GroupLayout.PREFERRED_SIZE))
+						.addGroup(gl_panel.createSequentialGroup().addContainerGap().addComponent(scrollPane,
+								GroupLayout.DEFAULT_SIZE, 398, Short.MAX_VALUE)))
+						.addGap(0)));
+		gl_panel.setVerticalGroup(gl_panel.createParallelGroup(Alignment.LEADING)
+				.addGroup(gl_panel.createSequentialGroup().addGroup(gl_panel.createParallelGroup(Alignment.LEADING)
+						.addGroup(gl_panel.createSequentialGroup().addContainerGap()
+								.addGroup(gl_panel.createParallelGroup(Alignment.BASELINE)
+										.addComponent(comboBox, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE,
+												GroupLayout.PREFERRED_SIZE)
+										.addComponent(lblPrzesylka)))
 						.addComponent(textArea, GroupLayout.PREFERRED_SIZE, 25, GroupLayout.PREFERRED_SIZE))
-					.addPreferredGap(ComponentPlacement.RELATED)
-					.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 275, Short.MAX_VALUE)
-					.addGap(4))
-		);
+						.addPreferredGap(ComponentPlacement.RELATED)
+						.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 275, Short.MAX_VALUE).addGap(4)));
 
 		list = new JList();
 		list.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
-				String message = (String) list.getSelectedValue();
-				JOptionPane.showMessageDialog(null, message);
+			//	String message = (String) list.getSelectedValue();
+			//	JOptionPane.showMessageDialog(null, message);
+			//	frame.setVisible(false);
+				new WyswietlaniePaczkiKurier(login, socket, p[list.getSelectedIndex()]);
 			}
 		});
 
@@ -201,8 +194,9 @@ public class ZalogujKurier {
 		panel.setLayout(gl_panel);
 
 		btnWyloguj.addActionListener(myAction);
-		
+
 	}
+
 	private void ustawienieInputOutput() {
 		try {
 			output = new PrintWriter(socket.getOutputStream(), true);
@@ -261,5 +255,3 @@ public class ZalogujKurier {
 		}
 	}
 }
-// paczki do odbioru
-// paczki do zamowienia od klineta

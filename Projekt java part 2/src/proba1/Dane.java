@@ -8,16 +8,19 @@ public class Dane implements Serializable {
 	private String ulica;
 	private int nrDomu;
 	private int nrMieszkania;
-	private int kodPocztowy1;
-	private int kodPocztowy2;
+	private String kodPocztowy;
+	private String imie;
+	private String nazwisko;
 
-	public Dane(String miasto, String ulica, int nrDomu, int nrMieszkania, int kodPocztowy1, int kodPocztowy2) {
+	public Dane(String miasto, String ulica, int nrDomu, int nrMieszkania, String kodPocztowy, String imie,
+			String nazwisko) {
 		this.miasto = miasto;
 		this.ulica = ulica;
 		this.nrDomu = nrDomu;
 		this.nrMieszkania = nrMieszkania;
-		this.kodPocztowy1 = kodPocztowy1;
-		this.kodPocztowy2 = kodPocztowy2;
+		this.kodPocztowy = kodPocztowy;
+		this.imie = imie;
+		this.nazwisko = nazwisko;
 	}
 
 	public String getMiasto() {
@@ -36,23 +39,27 @@ public class Dane implements Serializable {
 		return nrMieszkania;
 	}
 
-	public int getKodPocztowy1() {
-		return kodPocztowy1;
+	public String getKodPocztowy() {
+		return kodPocztowy;
 	}
 
-	public int getKodPocztowy2() {
-		return kodPocztowy2;
+	public String getImie() {
+		return imie;
+	}
+
+	public String getNazwisko() {
+		return nazwisko;
 	}
 
 	@Override
 	public String toString() {
 		if (nrMieszkania == 0) {
-			return "\n	Miasto = " + miasto + "\n	Ulica = " + ulica + "\n	Numer domu = " + nrDomu
-					+ "\n	Kod pocztowy =" + kodPocztowy1 + "-" + kodPocztowy2;
+			return "\n	Imie = " + imie + "\n	Nazwisko = " + nazwisko + "\n	Miasto = " + miasto + "\n	Ulica = "
+					+ ulica + "\n	Numer domu = " + nrDomu + "\n	Kod pocztowy = " + kodPocztowy;
 		} else
-			return "\n	Miasto = " + miasto + "\n	Ulica = " + ulica + "\n	Numer domu = " + nrDomu
-					+ "\n	Numer mieszkania = " + nrMieszkania + "\n	Kod pocztowy = " + kodPocztowy1 + "-"
-					+ kodPocztowy2;
+			return "\n	Imie = " + imie + "\n	Nazwisko = " + nazwisko + "\n	Miasto = " + miasto + "\n	Ulica = "
+					+ ulica + "\n	Numer domu = " + nrDomu + "\n	Numer mieszkania = " + nrMieszkania
+					+ "\n	Kod pocztowy = " + kodPocztowy;
 	}
 
 }

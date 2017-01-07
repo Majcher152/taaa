@@ -31,9 +31,9 @@ public class KlientSerwer extends Thread {
 			System.err.println("I/O error dla	" + name);
 			System.exit(3);
 		} catch (Exception exc) {
-			exc.printStackTrace();
+			exc.printStackTrace();	
 			System.exit(4);
-		}
+		}	
 	}
 
 
