@@ -151,6 +151,7 @@ public class ZalogujKurier {
 		JScrollPane scrollPane = new JScrollPane();
 
 		JTextArea textArea = new JTextArea();
+		textArea.setEditable(false);
 		springLayout.putConstraint(SpringLayout.EAST, textArea, -72, SpringLayout.EAST, frame.getContentPane());
 
 		// textArea.setText(login + " " + haslo.toString());

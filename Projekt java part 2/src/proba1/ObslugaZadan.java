@@ -7,6 +7,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.Date;
 
 public class ObslugaZadan extends Thread {
 
@@ -91,8 +92,10 @@ public class ObslugaZadan extends Thread {
 			String numerPaczki = odczytWiadomosciOdKlienta();
 			System.out.println(numerPaczki);
 			// SPRAWDZANIE W BAZIE DANYCH paczki
-			Paczka p = new Paczka(120, (float) 12.4, 2, true, "List", true, "a", "b", 1, 2, "31-333","imieA", "nazwiskoA", "lalala", "cacasrea",
-					3, 4, "11-111","imieN", "nazwiskoN");
+			Date aktualnaData = new Date();
+
+			Paczka p = new Paczka(120, (float) 12.4, 2, true, "List", true, "a", "b", 1, 2, "31-333", "imieA",
+					"nazwiskoA", "lalala", "cacasrea", 3, 4, "11-111", "imieN", "nazwiskoN", aktualnaData);
 			try {
 				ObjectOutputStream oos = new ObjectOutputStream(connection.getOutputStream());
 				oos.writeObject(p);
@@ -111,11 +114,13 @@ public class ObslugaZadan extends Thread {
 			out.flush();
 			String wiadomosc = odczytWiadomosciOdKlienta();
 			System.out.println(wiadomosc);
+			Date aktualnaData = new Date();
+
 			Paczka p[] = new Paczka[2];
-			p[0] = new Paczka(120, (float) 12.4, 2, true, "List", true, "a", "b", 1, 2, "31-333", "imieA", "nazwiskoA", "lalala", "cacasrea", 3,
-					4, "11-111", "imieN", "nazwiskoN");
-			p[1] = new Paczka(220, (float) 12.4, 2, true, "List", true, "a", "b", 1, 2, "31-333", "imieN", "nazwiskoN", "lalala", "cacasrea", 3,
-					4, "11-111", "imieN", "nazwiskoN");
+			p[0] = new Paczka(120, (float) 12.4, 2, true, "List", true, "a", "b", 1, 2, "31-333", "imieA", "nazwiskoA",
+					"lalala", "cacasrea", 3, 4, "11-111", "imieN", "nazwiskoN", aktualnaData);
+			p[1] = new Paczka(220, (float) 12.4, 2, true, "List", true, "a", "b", 1, 2, "31-333", "imieN", "nazwiskoN",
+					"lalala", "cacasrea", 3, 4, "11-111", "imieN", "nazwiskoN", aktualnaData);
 			try {
 				ObjectOutputStream oos = new ObjectOutputStream(connection.getOutputStream());
 				oos.writeObject(p);
@@ -154,7 +159,7 @@ public class ObslugaZadan extends Thread {
 		// WYSZUKUJEMY W BAZIE DANYCH PACZKI O PODANYM ID
 		// I ZMIENIAMY STAN
 		Paczka p = null;
-	//	p.setStan(komunikat);
+		// p.setStan(komunikat);
 	}
 
 	private String odczytWiadomosciOdKlienta() {

@@ -29,6 +29,7 @@ import java.io.InputStreamReader;
 import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Properties;
@@ -51,11 +52,15 @@ import javax.swing.event.ChangeEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.ItemEvent;
 import java.awt.TextField;
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeEvent;
 
 public class WyslijPaczke {
 
+	private Date aktualnaData;
+	private boolean flagaData = false;
+	private Date selectedDate;
 	private double wyswietlana_cena;
-
 	private JFrame frame;
 	private JTextField textField_waga;
 	private final ButtonGroup buttonGroup_wielkosc_przesylki = new ButtonGroup();
@@ -351,9 +356,11 @@ public class WyslijPaczke {
 			}
 		});
 		UtilDateModel model = new UtilDateModel();
-		model.setDate(Calendar.DATE, 1, 1);
-		//model.
-	//	model.setValue(Calendar.DATE);
+		Calendar calendar = Calendar.getInstance();
+		model.setDate(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
+		model.setSelected(true);
+		aktualnaData = model.getValue();
+
 		Properties prop = new Properties();
 		prop.put("text.today", "Today");
 		prop.put("text.month", "Month");
@@ -361,12 +368,27 @@ public class WyslijPaczke {
 
 		JDatePanelImpl datePanel = new JDatePanelImpl(model, prop);
 		// JDatePanelImpl datePanel = new JDatePanelImpl(model, null);
-
 		JDatePickerImpl datePicker = new JDatePickerImpl(datePanel, new DateLabelFormatter());
 		// JDatePickerImpl datePicker = new JDatePickerImpl(datePanel, null);
 
+		datePicker.getJFormattedTextField().addPropertyChangeListener(new PropertyChangeListener() {
+			public void propertyChange(PropertyChangeEvent arg0) {
+				if (flagaData) {
+					selectedDate = (Date) datePicker.getModel().getValue();
+					if (aktualnaData.before(selectedDate))
+						System.out.println(selectedDate);
+					else
+						JOptionPane.showMessageDialog(null, "Nasza firma nie przyjmuje zamówieñ na aktualny dzieñ ani nie \njest w stanie cofn¹æ siê w czasie. Za problemy przepraszamy.\n:(");
+				}
+				flagaData = true;
+			}
+		});
+
 		frame.getContentPane().add(datePicker);
+
 		SpringLayout springLayout = new SpringLayout();
+		springLayout.putConstraint(SpringLayout.WEST, datePicker, 0, SpringLayout.WEST, lblUlica_1);
+		springLayout.putConstraint(SpringLayout.SOUTH, datePicker, 0, SpringLayout.SOUTH, textField_koszt);
 		springLayout.putConstraint(SpringLayout.NORTH, textField_koszt, 63, SpringLayout.SOUTH, textField_kod_ad1);
 		springLayout.putConstraint(SpringLayout.WEST, textField_koszt, 12, SpringLayout.EAST, lblKoszt);
 		springLayout.putConstraint(SpringLayout.EAST, textField_koszt, -441, SpringLayout.EAST, frame.getContentPane());
@@ -380,8 +402,6 @@ public class WyslijPaczke {
 		springLayout.putConstraint(SpringLayout.EAST, lblKoszt, 0, SpringLayout.EAST, textField_kod_ad);
 		springLayout.putConstraint(SpringLayout.WEST, btnPowrot, 0, SpringLayout.WEST, lblPrzesyka);
 		springLayout.putConstraint(SpringLayout.SOUTH, btnPowrot, -10, SpringLayout.SOUTH, frame.getContentPane());
-		springLayout.putConstraint(SpringLayout.NORTH, datePicker, 40, SpringLayout.SOUTH, textField_kod_na);
-		springLayout.putConstraint(SpringLayout.EAST, datePicker, -116, SpringLayout.EAST, frame.getContentPane());
 		springLayout.putConstraint(SpringLayout.NORTH, textField_kod_ad1, -3, SpringLayout.NORTH, lblKodPocztowy);
 		springLayout.putConstraint(SpringLayout.WEST, textField_kod_ad1, 7, SpringLayout.EAST, label);
 		springLayout.putConstraint(SpringLayout.EAST, textField_kod_ad1, 0, SpringLayout.EAST, chckbxTak);
@@ -577,6 +597,11 @@ public class WyslijPaczke {
 		springLayout.putConstraint(SpringLayout.NORTH, lblImie_1, 3, SpringLayout.NORTH, textField_3);
 		frame.getContentPane().add(textField_3);
 		textField_3.setColumns(10);
+		
+		JLabel lblKiedyKurierMa = new JLabel("Kiedy kurier ma przyjecha by odebra\u0107 przesylke: ");
+		springLayout.putConstraint(SpringLayout.NORTH, lblKiedyKurierMa, 26, SpringLayout.SOUTH, textField_kod_na);
+		springLayout.putConstraint(SpringLayout.WEST, lblKiedyKurierMa, 0, SpringLayout.WEST, lblUlica_1);
+		frame.getContentPane().add(lblKiedyKurierMa);
 		btnPowrot.addActionListener(myAction);
 		btnZamwKuriera.addActionListener(myAction);
 
@@ -601,9 +626,6 @@ public class WyslijPaczke {
 			case "Zamow kuriera":
 				if (komunikat_waga())
 					break;
-				// if (komunikat_miasto(textField_miasto_ad.getText()) ||
-				// komunikat_miasto(textField_miasto_na.getText()))
-				// break;
 				else if (komunikat_ulica(textField_ulica_ad.getText()) || komunikat_ulica(textField_ulica_na.getText()))
 					break;
 				else if (komunikat_dom_ad(textField_nr_dom_ad.getText())
@@ -628,7 +650,7 @@ public class WyslijPaczke {
 							rdbtnEkspresowa.isSelected(), (String) comboBox_miasto_ad.getSelectedItem(),
 							textField_ulica_ad.getText(), domAd, mieAd, kodAd, "imieA", "nazwiskoA",
 							(String) comboBox_miasto_na.getSelectedItem(), textField_ulica_na.getText(), domNa, mieNa,
-							kodNa, "imieN", "nazwiskoN");
+							kodNa, "imieN", "nazwiskoN",selectedDate);
 					JOptionPane.showMessageDialog(null, p.toString());
 					JOptionPane.showMessageDialog(null,
 							"Prosze zapisac numer przesylki!\nNumer przesylki: " + p.getPaczkaID());
@@ -733,7 +755,7 @@ public class WyslijPaczke {
 			} else
 				return false;
 		}
-
+// TU JEST BLAD TO TRZEBA ROZDZIELIC
 		private boolean komunikat_kod_ad(String kod) {
 			try {
 				if (kod.contains(textField_kod_ad.getText()) && kod.length() == 2)

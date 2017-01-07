@@ -1,6 +1,8 @@
 package proba1;
 
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class Paczka implements Serializable {
 
@@ -13,9 +15,11 @@ public class Paczka implements Serializable {
 	private boolean ekspres;
 	private Adresat adresat;
 	private Nadawca nadawca;
+	private Date data;
 
-	public Paczka(int paczkaID, float koszt,double waga, boolean szklo, String rodzaj, boolean ekspres, String miastoA, String UlicaA, int nrDomA,
-			int nrMieA, String kodA,String imieA, String nazwiskoA, String miastoN, String UlicaN, int nrDomN, int nrMieN, String kodN,String imieN, String nazwiskoN) {
+	public Paczka(int paczkaID, float koszt, double waga, boolean szklo, String rodzaj, boolean ekspres, String miastoA,
+			String UlicaA, int nrDomA, int nrMieA, String kodA, String imieA, String nazwiskoA, String miastoN,
+			String UlicaN, int nrDomN, int nrMieN, String kodN, String imieN, String nazwiskoN, Date data) {
 		setStan("Do Odebrania");
 		this.paczkaID = paczkaID;
 		this.koszt = koszt;
@@ -23,23 +27,34 @@ public class Paczka implements Serializable {
 		this.szklo = szklo;
 		this.rodzaj = rodzaj;
 		this.ekspres = ekspres;
+		this.data = data;
 		setAdresat(miastoA, UlicaA, nrDomA, nrMieA, kodA, imieA, nazwiskoA);
 		setNadawca(miastoN, UlicaN, nrDomN, nrMieN, kodN, imieN, nazwiskoN);
 	}
-	
 
 	@Override
 	public String toString() {
-		return "Numer paczki = " + paczkaID + "\nStan = " + stan + "\nKoszt = " + koszt + "\nWaga = " + waga + "\nSzklo = "
-				+ szklo + "\nRodzaj = " + rodzaj + "\nEkspres = " + ekspres + "\n\nDaneAdresata:" + adresat
+		return "Numer paczki = " + paczkaID + "\nStan = " + stan + "\nKoszt = " + koszt + "\nWaga = " + waga
+				+ "\nSzklo = " + szklo + "\nRodzaj = " + rodzaj + "\nEkspres = " + ekspres
+				+ "\nData przyjazdu kuriera = " + getDataToString(data) + "\n\nDaneAdresata:" + adresat
 				+ "\n\nDaneNadawcy:" + nadawca + "";
 	}
 
+	public Date getData() {
+		return data;
+	}
+
+	public String getDataToString(Date data) {
+		String dataToString = null;
+		SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+		dataToString = dateFormat.format(data);
+		return dataToString;
+	}
 
 	public float getKoszt() {
 		return koszt;
 	}
-	
+
 	public String getStan() {
 		return stan;
 	}
@@ -72,8 +87,8 @@ public class Paczka implements Serializable {
 		return adresat;
 	}
 
-
-	public void setAdresat(String miastoA, String UlicaA, int nrDomA, int nrMieA, String kodA, String imieA, String nazwiskoA) {
+	public void setAdresat(String miastoA, String UlicaA, int nrDomA, int nrMieA, String kodA, String imieA,
+			String nazwiskoA) {
 		this.adresat = new Adresat(miastoA, UlicaA, nrDomA, nrMieA, kodA, imieA, nazwiskoA);
 	}
 
@@ -81,8 +96,8 @@ public class Paczka implements Serializable {
 		return nadawca;
 	}
 
-
-	public void setNadawca(String miastoN, String UlicaN, int nrDomN, int nrMieN, String kodN, String imieN, String nazwiskoN) {
+	public void setNadawca(String miastoN, String UlicaN, int nrDomN, int nrMieN, String kodN, String imieN,
+			String nazwiskoN) {
 		this.nadawca = new Nadawca(miastoN, UlicaN, nrDomN, nrMieN, kodN, imieN, nazwiskoN);
 	}
 }
