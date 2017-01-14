@@ -93,10 +93,10 @@ public class WyslijPaczke {
 	private JComboBox comboBox_miasto_na;
 	private float[] koszta = new float[4];
 	private float koszt;
-	private JTextField textField;
-	private JTextField textField_1;
-	private JTextField textField_2;
-	private JTextField textField_3;
+	private JTextField textField_nazwisko_na;
+	private JTextField textField_imie_na;
+	private JTextField textField_nazwisko_ad;
+	private JTextField textField_imie_ad;
 	private SpringLayout springLayout_1;
 	private SpringLayout springLayout_2;
 
@@ -378,7 +378,8 @@ public class WyslijPaczke {
 					if (aktualnaData.before(selectedDate))
 						System.out.println(selectedDate);
 					else
-						JOptionPane.showMessageDialog(null, "Nasza firma nie przyjmuje zamówieñ na aktualny dzieñ ani nie \njest w stanie cofn¹æ siê w czasie. Za problemy przepraszamy.\n:(");
+						JOptionPane.showMessageDialog(null,
+								"Nasza firma nie przyjmuje zamówieñ na aktualny dzieñ ani nie \njest w stanie cofn¹æ siê w czasie. Za problemy przepraszamy.\n:(");
 				}
 				flagaData = true;
 			}
@@ -556,20 +557,22 @@ public class WyslijPaczke {
 		springLayout.putConstraint(SpringLayout.WEST, lblNazwisko, 0, SpringLayout.WEST, lblImie);
 		frame.getContentPane().add(lblImie);
 
-		textField = new JTextField();
-		springLayout.putConstraint(SpringLayout.WEST, textField, 36, SpringLayout.EAST, lblNazwisko);
-		springLayout.putConstraint(SpringLayout.EAST, textField, -10, SpringLayout.EAST, frame.getContentPane());
-		springLayout.putConstraint(SpringLayout.WEST, comboBox_miasto_na, 0, SpringLayout.WEST, textField);
-		springLayout.putConstraint(SpringLayout.NORTH, textField, -3, SpringLayout.NORTH, lblNazwisko);
-		frame.getContentPane().add(textField);
-		textField.setColumns(10);
+		textField_nazwisko_na = new JTextField();
+		springLayout.putConstraint(SpringLayout.WEST, textField_nazwisko_na, 36, SpringLayout.EAST, lblNazwisko);
+		springLayout.putConstraint(SpringLayout.EAST, textField_nazwisko_na, -10, SpringLayout.EAST,
+				frame.getContentPane());
+		springLayout.putConstraint(SpringLayout.WEST, comboBox_miasto_na, 0, SpringLayout.WEST, textField_nazwisko_na);
+		springLayout.putConstraint(SpringLayout.NORTH, textField_nazwisko_na, -3, SpringLayout.NORTH, lblNazwisko);
+		frame.getContentPane().add(textField_nazwisko_na);
+		textField_nazwisko_na.setColumns(10);
 
-		textField_1 = new JTextField();
-		springLayout.putConstraint(SpringLayout.NORTH, textField_1, -3, SpringLayout.NORTH, lblImie);
-		springLayout.putConstraint(SpringLayout.WEST, textField_1, 60, SpringLayout.EAST, lblImie);
-		springLayout.putConstraint(SpringLayout.EAST, textField_1, -10, SpringLayout.EAST, frame.getContentPane());
-		frame.getContentPane().add(textField_1);
-		textField_1.setColumns(10);
+		textField_imie_na = new JTextField();
+		springLayout.putConstraint(SpringLayout.NORTH, textField_imie_na, -3, SpringLayout.NORTH, lblImie);
+		springLayout.putConstraint(SpringLayout.WEST, textField_imie_na, 60, SpringLayout.EAST, lblImie);
+		springLayout.putConstraint(SpringLayout.EAST, textField_imie_na, -10, SpringLayout.EAST,
+				frame.getContentPane());
+		frame.getContentPane().add(textField_imie_na);
+		textField_imie_na.setColumns(10);
 
 		JLabel lblNazwisko_1 = new JLabel("Nazwisko:");
 		springLayout.putConstraint(SpringLayout.NORTH, lblNazwisko, 0, SpringLayout.NORTH, lblNazwisko_1);
@@ -582,22 +585,24 @@ public class WyslijPaczke {
 		springLayout.putConstraint(SpringLayout.WEST, lblImie_1, 0, SpringLayout.WEST, lblPrzesyka);
 		frame.getContentPane().add(lblImie_1);
 
-		textField_2 = new JTextField();
-		springLayout.putConstraint(SpringLayout.NORTH, textField_2, -3, SpringLayout.NORTH, lblNazwisko_1);
-		springLayout.putConstraint(SpringLayout.WEST, textField_2, 0, SpringLayout.WEST, textField_kod_ad);
-		springLayout.putConstraint(SpringLayout.EAST, textField_2, -42, SpringLayout.WEST, lblNazwisko);
-		frame.getContentPane().add(textField_2);
-		textField_2.setColumns(10);
+		textField_nazwisko_ad = new JTextField();
+		springLayout.putConstraint(SpringLayout.NORTH, textField_nazwisko_ad, -3, SpringLayout.NORTH, lblNazwisko_1);
+		springLayout.putConstraint(SpringLayout.WEST, textField_nazwisko_ad, 0, SpringLayout.WEST, textField_kod_ad);
+		springLayout.putConstraint(SpringLayout.EAST, textField_nazwisko_ad, -42, SpringLayout.WEST, lblNazwisko);
+		frame.getContentPane().add(textField_nazwisko_ad);
+		textField_nazwisko_ad.setColumns(10);
 
-		textField_3 = new JTextField();
-		springLayout.putConstraint(SpringLayout.WEST, textField_3, 61, SpringLayout.EAST, lblImie_1);
-		springLayout.putConstraint(SpringLayout.SOUTH, textField_3, -17, SpringLayout.NORTH, textField_2);
-		springLayout.putConstraint(SpringLayout.EAST, textField_3, -333, SpringLayout.EAST, frame.getContentPane());
-		springLayout.putConstraint(SpringLayout.WEST, lblImie, 42, SpringLayout.EAST, textField_3);
-		springLayout.putConstraint(SpringLayout.NORTH, lblImie_1, 3, SpringLayout.NORTH, textField_3);
-		frame.getContentPane().add(textField_3);
-		textField_3.setColumns(10);
-		
+		textField_imie_ad = new JTextField();
+		springLayout.putConstraint(SpringLayout.WEST, textField_imie_ad, 61, SpringLayout.EAST, lblImie_1);
+		springLayout.putConstraint(SpringLayout.SOUTH, textField_imie_ad, -17, SpringLayout.NORTH,
+				textField_nazwisko_ad);
+		springLayout.putConstraint(SpringLayout.EAST, textField_imie_ad, -333, SpringLayout.EAST,
+				frame.getContentPane());
+		springLayout.putConstraint(SpringLayout.WEST, lblImie, 42, SpringLayout.EAST, textField_imie_ad);
+		springLayout.putConstraint(SpringLayout.NORTH, lblImie_1, 3, SpringLayout.NORTH, textField_imie_ad);
+		frame.getContentPane().add(textField_imie_ad);
+		textField_imie_ad.setColumns(10);
+
 		JLabel lblKiedyKurierMa = new JLabel("Kiedy kurier ma przyjecha by odebra\u0107 przesylke: ");
 		springLayout.putConstraint(SpringLayout.NORTH, lblKiedyKurierMa, 26, SpringLayout.SOUTH, textField_kod_na);
 		springLayout.putConstraint(SpringLayout.WEST, lblKiedyKurierMa, 0, SpringLayout.WEST, lblUlica_1);
@@ -617,6 +622,10 @@ public class WyslijPaczke {
 		private int kod1Na;
 		private int kod2Ad;
 		private int kod2Na;
+		private String imieAd;
+		private String imieNa;
+		private String nazwiskoAd;
+		private String nazwiskoNa;
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
@@ -628,6 +637,12 @@ public class WyslijPaczke {
 					break;
 				else if (komunikat_ulica(textField_ulica_ad.getText()) || komunikat_ulica(textField_ulica_na.getText()))
 					break;
+				else if (komunikat_imie_ad(textField_imie_ad.getText())
+						|| komunikat_imie_na(textField_imie_na.getText()))
+					break;
+				else if (komunikat_nazwisko_ad(textField_nazwisko_ad.getText())
+						|| komunikat_nazwisko_na(textField_nazwisko_na.getText()))
+					break;
 				else if (komunikat_dom_ad(textField_nr_dom_ad.getText())
 						|| komunikat_dom_na(textField_nr_dom_na.getText()))
 					break;
@@ -635,10 +650,12 @@ public class WyslijPaczke {
 						|| komunikat_mieszkanie_na(textField_nr_mie_na.getText()))
 					break;
 				else if (komunikat_kod_ad(textField_kod_ad.getText())
-						|| (komunikat_kod_ad(textField_kod_ad1.getText())))
+						|| (komunikat_kod_ad2(textField_kod_ad1.getText())))
 					break;
 				else if (komunikat_kod_na(textField_kod_na.getText())
-						|| (komunikat_kod_na(textField_kod_na1.getText())))
+						|| (komunikat_kod_na2(textField_kod_na1.getText())))
+					break;
+				else if (komunikat_data_odebrania())
 					break;
 				else {
 					String mess = "Wyslij Paczke";
@@ -648,9 +665,9 @@ public class WyslijPaczke {
 					int paczka_ID = (int) Double.parseDouble(odczytWiadomosciOdSerwera());
 					Paczka p = new Paczka(paczka_ID, koszt, wagaWartosc, chckbxTak.isSelected(), rodzaj,
 							rdbtnEkspresowa.isSelected(), (String) comboBox_miasto_ad.getSelectedItem(),
-							textField_ulica_ad.getText(), domAd, mieAd, kodAd, "imieA", "nazwiskoA",
+							textField_ulica_ad.getText(), domAd, mieAd, kodAd, imieAd, nazwiskoAd,
 							(String) comboBox_miasto_na.getSelectedItem(), textField_ulica_na.getText(), domNa, mieNa,
-							kodNa, "imieN", "nazwiskoN",selectedDate);
+							kodNa, imieNa, nazwiskoNa, selectedDate);
 					JOptionPane.showMessageDialog(null, p.toString());
 					JOptionPane.showMessageDialog(null,
 							"Prosze zapisac numer przesylki!\nNumer przesylki: " + p.getPaczkaID());
@@ -755,7 +772,7 @@ public class WyslijPaczke {
 			} else
 				return false;
 		}
-// TU JEST BLAD TO TRZEBA ROZDZIELIC
+
 		private boolean komunikat_kod_ad(String kod) {
 			try {
 				if (kod.contains(textField_kod_ad.getText()) && kod.length() == 2)
@@ -763,7 +780,20 @@ public class WyslijPaczke {
 				else if (kod.contains(textField_kod_ad.getText()) && kod.length() != 2) {
 					JOptionPane.showMessageDialog(null, "Pierwsza czesc kodu pocztowego to dwie cyfry!");
 					return true;
-				} else if (kod.contains(textField_kod_ad1.getText()) && kod.length() == 3)
+				}
+			} catch (Exception exp) {
+				if (kod.isEmpty())
+					JOptionPane.showMessageDialog(null, "Uzupelnuj kod pocztowy!");
+				else
+					JOptionPane.showMessageDialog(null, "Kod musi byc liczba!");
+				return true;
+			}
+			return false;
+		}
+
+		private boolean komunikat_kod_ad2(String kod) {
+			try {
+				if (kod.contains(textField_kod_ad1.getText()) && kod.length() == 3)
 					kod2Ad = (int) Double.parseDouble(kod);
 				else if (kod.contains(textField_kod_ad1.getText()) && kod.length() != 3) {
 					JOptionPane.showMessageDialog(null, "Druga czesc kodu pocztowego to trzy cyfry!");
@@ -786,7 +816,20 @@ public class WyslijPaczke {
 				else if (kod.contains(textField_kod_na.getText()) && kod.length() != 2) {
 					JOptionPane.showMessageDialog(null, "Pierwsza czesc kodu pocztowego to dwie cyfry!");
 					return true;
-				} else if (kod.contains(textField_kod_na1.getText()) && kod.length() == 3)
+				}
+			} catch (Exception exp) {
+				if (kod.isEmpty())
+					JOptionPane.showMessageDialog(null, "Uzupelnuj kod pocztowy!");
+				else
+					JOptionPane.showMessageDialog(null, "Kod musi byc liczba!");
+				return true;
+			}
+			return false;
+		}
+
+		private boolean komunikat_kod_na2(String kod) {
+			try {
+				if (kod.contains(textField_kod_na1.getText()) && kod.length() == 3)
 					kod2Na = (int) Double.parseDouble(kod);
 				else if (kod.contains(textField_kod_na1.getText()) && kod.length() != 3) {
 					JOptionPane.showMessageDialog(null, "Druga czesc kodu pocztowego to trzy cyfry!");
@@ -802,17 +845,63 @@ public class WyslijPaczke {
 			return false;
 		}
 
-		private boolean komunikat_miasto(String miasto) {
+		private boolean komunikat_imie_ad(String imie) {
 			try {
-				Double.parseDouble(miasto);
+				imieAd = imie;
+				Double.parseDouble(imie);
 			} catch (Exception exp) {
-				if (miasto.isEmpty()) {
-					JOptionPane.showMessageDialog(null, "Podaj miasto!");
+				if (imie.isEmpty()) {
+					JOptionPane.showMessageDialog(null, "Podaj imie adresata!");
 					return true;
 				} else
 					return false;
 			}
-			JOptionPane.showMessageDialog(null, "Miasto nie moze byc liczba!");
+			JOptionPane.showMessageDialog(null, "Imie nie moze byc liczba!");
+			return true;
+		}
+
+		private boolean komunikat_imie_na(String imie) {
+			try {
+				imieNa = imie;
+				Double.parseDouble(imie);
+			} catch (Exception exp) {
+				if (imie.isEmpty()) {
+					JOptionPane.showMessageDialog(null, "Podaj imie nadawcy!");
+					return true;
+				} else
+					return false;
+			}
+			JOptionPane.showMessageDialog(null, "Imie nie moze byc liczba!");
+			return true;
+		}
+
+		private boolean komunikat_nazwisko_ad(String nazwisko) {
+			try {
+				nazwiskoAd = nazwisko;
+				Double.parseDouble(nazwisko);
+			} catch (Exception exp) {
+				if (nazwisko.isEmpty()) {
+					JOptionPane.showMessageDialog(null, "Podaj nazwisko adresata!");
+					return true;
+				} else
+					return false;
+			}
+			JOptionPane.showMessageDialog(null, "Nazwisko nie moze byc liczba!");
+			return true;
+		}
+
+		private boolean komunikat_nazwisko_na(String nazwisko) {
+			try {
+				nazwiskoNa = nazwisko;
+				Double.parseDouble(nazwisko);
+			} catch (Exception exp) {
+				if (nazwisko.isEmpty()) {
+					JOptionPane.showMessageDialog(null, "Podaj nazwisko nadawcy!");
+					return true;
+				} else
+					return false;
+			}
+			JOptionPane.showMessageDialog(null, "Nazwisko nie moze byc liczba!");
 			return true;
 		}
 
@@ -892,6 +981,23 @@ public class WyslijPaczke {
 			return false;
 		}
 
+		private boolean komunikat_data_odebrania() {
+
+			if (selectedDate == aktualnaData) {
+				JOptionPane.showMessageDialog(null,
+						"Nasza firma nie przyjmuje zamówieñ na aktualny dzieñ ani nie \njest w stanie cofn¹æ siê w czasie. Za problemy przepraszamy.\n:(");
+				return true;
+			} else if (selectedDate == null) {
+				JOptionPane.showMessageDialog(null,
+						"Nasza firma nie przyjmuje zamówieñ na aktualny dzieñ ani nie \njest w stanie cofn¹æ siê w czasie. Za problemy przepraszamy.\n:(");
+				return true;
+			} else if (aktualnaData.after(selectedDate)) {
+				JOptionPane.showMessageDialog(null,
+						"Nasza firma nie przyjmuje zamówieñ na aktualny dzieñ ani nie \njest w stanie cofn¹æ siê w czasie. Za problemy przepraszamy.\n:(");
+				return true;
+			} else
+				return false;
+		}
 	}
 
 	private class JTextFieldLimit extends PlainDocument {
