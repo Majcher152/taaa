@@ -1,4 +1,4 @@
-package proba1;
+/*package proba1;
 
 import java.io.Serializable;
 
@@ -63,3 +63,4 @@ public class Dane implements Serializable {
 	}
 
 }
+*/

@@ -1,4 +1,4 @@
-package proba1;
+/*package proba1;
 
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
@@ -100,4 +100,4 @@ public class Paczka implements Serializable {
 			String nazwiskoN) {
 		this.nadawca = new Nadawca(miastoN, UlicaN, nrDomN, nrMieN, kodN, imieN, nazwiskoN);
 	}
-}
+}*/

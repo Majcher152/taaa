@@ -1,4 +1,4 @@
-package proba1;
+/*package proba1;
 
 public class Adresat extends Dane{
 
@@ -10,3 +10,4 @@ public class Adresat extends Dane{
 
 
 }
+*/

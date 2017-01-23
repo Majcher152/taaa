@@ -4,6 +4,9 @@ import java.awt.EventQueue;
 
 import javax.swing.JFrame;
 import javax.swing.SpringLayout;
+
+import baza.PACZKA;
+
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JLabel;
@@ -31,7 +34,7 @@ import java.awt.event.WindowEvent;
 public class WyswietlaniePaczkiKurier {
 
 	private JFrame frame;
-	private Paczka paczkaDoWyswietlenia;
+	private PACZKA paczkaDoWyswietlenia;
 	private BufferedReader input = null;
 	private PrintWriter output = null;
 	private Socket socket = null;
@@ -46,7 +49,7 @@ public class WyswietlaniePaczkiKurier {
 	/**
 	 * Create the application.
 	 */
-	public WyswietlaniePaczkiKurier(String login, Socket socket, Paczka paczkaDoWyswietlenia) {
+	public WyswietlaniePaczkiKurier(String login, Socket socket, PACZKA paczkaDoWyswietlenia) {
 		this.socket = socket;
 		this.paczkaDoWyswietlenia = paczkaDoWyswietlenia;
 		EventQueue.invokeLater(new Runnable() {
@@ -87,7 +90,7 @@ public class WyswietlaniePaczkiKurier {
 		frame.setBounds(100, 100, 450, 353);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-		JLabel lblNewLabel = new JLabel(paczkaDoWyswietlenia.getPaczkaID() + "");
+		JLabel lblNewLabel = new JLabel(paczkaDoWyswietlenia.getidPaczki() + "");
 
 		JScrollPane scrollPane = new JScrollPane();
 
@@ -180,7 +183,7 @@ public class WyswietlaniePaczkiKurier {
 					mess = "Przekazana do nadania";
 					output.println(mess);
 					output.flush();
-					output.println(paczkaDoWyswietlenia.getPaczkaID());
+					output.println(paczkaDoWyswietlenia.getidPaczki());
 					output.flush();
 				}
 				komunikat = false;
@@ -194,7 +197,7 @@ public class WyswietlaniePaczkiKurier {
 					mess = "W drodze do miasta adresata";
 					output.println(mess);
 					output.flush();
-					output.println(paczkaDoWyswietlenia.getPaczkaID());
+					output.println(paczkaDoWyswietlenia.getidPaczki());
 					output.flush();
 				}
 				komunikat = false;
@@ -209,7 +212,7 @@ public class WyswietlaniePaczkiKurier {
 					mess = "Przekazana do odebrania";
 					output.println(mess);
 					output.flush();
-					output.println(paczkaDoWyswietlenia.getPaczkaID());
+					output.println(paczkaDoWyswietlenia.getidPaczki());
 					output.flush();
 				}
 				komunikat = false;
@@ -226,7 +229,7 @@ public class WyswietlaniePaczkiKurier {
 					mess = "Odebrana";
 					output.println(mess);
 					output.flush();
-					output.println(paczkaDoWyswietlenia.getPaczkaID());
+					output.println(paczkaDoWyswietlenia.getidPaczki());
 					output.flush();
 				}
 				komunikat = false;
@@ -242,7 +245,7 @@ public class WyswietlaniePaczkiKurier {
 					mess = "W punkcie odbioru";
 					output.println(mess);
 					output.flush();
-					output.println(paczkaDoWyswietlenia.getPaczkaID());
+					output.println(paczkaDoWyswietlenia.getidPaczki());
 					output.flush();
 				}
 				komunikat = false;

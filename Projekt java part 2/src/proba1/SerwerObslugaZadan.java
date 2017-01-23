@@ -1,13 +1,11 @@
 package proba1;
 
-import java.io.BufferedReader;
+
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.regex.Pattern;
+
 
 public class SerwerObslugaZadan {
 
@@ -17,8 +15,11 @@ public class SerwerObslugaZadan {
 	private ServerSocket serwerSocket = null;
 	// Zmienna odpowiadaj¹ca za dzia³anie serwera
 	private boolean serwerDziala = true;
+	
+	 PolaczenieZBazaDanych polaczenieBD;
 
 	public static void main(String[] args) {
+		
 		// Inicjalizacja gniazda serwera
 		ServerSocket sS = null;
 		// Nazwa hosta
@@ -43,6 +44,7 @@ public class SerwerObslugaZadan {
 	}
 
 	public SerwerObslugaZadan(ServerSocket sS) {
+		polaczenieBD = new PolaczenieZBazaDanych();
 		// Ustawienie gniazda serwera
 		this.serwerSocket = sS;
 		System.out.println("Serwer: - Rozpoczêcie dzia³ania");
@@ -61,7 +63,7 @@ public class SerwerObslugaZadan {
 				System.out.println("Polaczenie ustawione ");
 				System.out.println("Klient " + KlientSerwer.ktoryKlient++);
 				// Start watku obs³ugi zlecen
-				new ObslugaZadan(connection).start();
+				new ObslugaZadan(connection,polaczenieBD).start();
 				
 				
 			} catch (Exception e1) {

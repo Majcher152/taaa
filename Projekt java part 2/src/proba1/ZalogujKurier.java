@@ -10,6 +10,9 @@ import javax.swing.JTextArea;
 import javax.swing.JComboBox;
 import javax.swing.JPanel;
 import javax.swing.border.TitledBorder;
+
+import baza.PACZKA;
+
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.DefaultComboBoxModel;
@@ -29,6 +32,7 @@ import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.awt.event.ItemListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.FocusAdapter;
@@ -43,7 +47,8 @@ public class ZalogujKurier {
 	private Socket socket = null;
 	private boolean flag = true;
 	private JList list;
-	private Paczka p[];
+	private ArrayList<PACZKA> doOdebrania;
+	private ArrayList<PACZKA> doDostarczenia;
 
 	public ZalogujKurier(String login, Socket socket) {
 		this.login = login;
@@ -72,14 +77,20 @@ public class ZalogujKurier {
 		output.flush();
 		try {
 			ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
-			p = (Paczka[]) ois.readObject();
+			doOdebrania = (ArrayList<PACZKA>) ois.readObject();
+			doDostarczenia = (ArrayList<PACZKA>) ois.readObject();
+			// String paczkaWyswietlanie = doOdebrania.toString();
 		} catch (IOException | ClassNotFoundException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-		String[] nazwy = new String[p.length];
-		for (int i = 0; i < p.length; i++) {
-			nazwy[i] = p[i].getKoszt() + "";
+
+		String[] nazwyDoOdebrania = new String[doOdebrania.size()];
+		String[] nazwyDoDostarczenia = new String[doDostarczenia.size()];
+
+		for (int i = 0; i < doOdebrania.size(); i++) {
+			nazwyDoOdebrania[i] = doOdebrania.get(i).getidPaczki() + "";
+			nazwyDoDostarczenia[i] = doDostarczenia.get(i).getidPaczki() + "";
 		}
 
 		frame = new JFrame();
@@ -115,11 +126,10 @@ public class ZalogujKurier {
 			public void itemStateChanged(ItemEvent arg0) {
 				comboBox.removeItem("");
 				if (comboBox.getSelectedItem().toString().contains("Do odebrania")) {
+
 					list.setModel(new AbstractListModel() {
 
-						String[] values = nazwy;
-						// String[] values = new String[] { "aa", "bb", "2",
-						// "4", "5", "6" };
+						String[] values = nazwyDoOdebrania;
 
 						public int getSize() {
 							return values.length;
@@ -129,9 +139,10 @@ public class ZalogujKurier {
 							return values[index];
 						}
 					});
+
 				} else {
 					list.setModel(new AbstractListModel() {
-						String[] values = new String[] { "chuj", "11", "22", "44", "55", "66" };
+						String[] values = nazwyDoDostarczenia;
 
 						public int getSize() {
 							return values.length;
@@ -184,10 +195,13 @@ public class ZalogujKurier {
 		list.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
-			//	String message = (String) list.getSelectedValue();
-			//	JOptionPane.showMessageDialog(null, message);
-			//	frame.setVisible(false);
-				new WyswietlaniePaczkiKurier(login, socket, p[list.getSelectedIndex()]);
+				// String message = (String) list.getSelectedValue();
+				// JOptionPane.showMessageDialog(null, message);
+				// frame.setVisible(false);
+				if (comboBox.getSelectedItem().toString().contains("Do odebrania"))
+					new WyswietlaniePaczkiKurier(login, socket, doOdebrania.get(list.getSelectedIndex()));
+				else
+					new WyswietlaniePaczkiKurier(login, socket, doDostarczenia.get(list.getSelectedIndex()));
 			}
 		});
 

@@ -7,7 +7,12 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.Date;
+
+import baza.PACZKA;
+
+import java.sql.*;
 
 public class ObslugaZadan extends Thread {
 
@@ -19,9 +24,12 @@ public class ObslugaZadan extends Thread {
 	private Socket connection = null;
 	private boolean flag = true;
 
-	public ObslugaZadan(Socket connection) {
+	PolaczenieZBazaDanych polaczenieBD;
+
+	public ObslugaZadan(Socket connection, PolaczenieZBazaDanych polaczenieBD) {
 		// Ustawienie gniazda klienta
 		this.connection = connection;
+		this.polaczenieBD = polaczenieBD;
 		// Klient.ktoryKlient++;
 	}
 
@@ -38,12 +46,12 @@ public class ObslugaZadan extends Thread {
 		}
 		while (flag) {
 			try {
-				String aaa = null;
+				String komunikat = null;
 				if (in.ready()) {
-					aaa = in.readLine();
-					System.out.println(aaa);
+					komunikat = in.readLine();
+					System.out.println(komunikat);
 
-					ObslugaKomunikatowOdKlienta(aaa);
+					ObslugaKomunikatowOdKlienta(komunikat);
 				}
 			} catch (Exception exc) {
 				System.out.println(flag + " 2");
@@ -71,10 +79,11 @@ public class ObslugaZadan extends Thread {
 			out.flush();
 			try {
 				ObjectInputStream ois = new ObjectInputStream(connection.getInputStream());
-				Paczka p = null;
-				p = (Paczka) ois.readObject();
+				PACZKA p = null;
+				p = (PACZKA) ois.readObject();
 				if (!(p.equals(null))) {
-					// WYSY£AMY TO DO BAZY DANYCH I POBIERAMY HASLO
+					// dodanie paczki do bazy danych
+					polaczenieBD.dodajPaczke(p);
 					System.out.println(p.toString());
 				}
 			} catch (Exception exc) {
@@ -90,46 +99,56 @@ public class ObslugaZadan extends Thread {
 			out.println(komunikat + " ... OK");
 			out.flush();
 			String numerPaczki = odczytWiadomosciOdKlienta();
-			System.out.println(numerPaczki);
-			// SPRAWDZANIE W BAZIE DANYCH paczki
-			Date aktualnaData = new Date();
+			if (!(numerPaczki.isEmpty())) {
 
-			Paczka p = new Paczka(120, (float) 12.4, 2, true, "List", true, "a", "b", 1, 2, "31-333", "imieA",
-					"nazwiskoA", "lalala", "cacasrea", 3, 4, "11-111", "imieN", "nazwiskoN", aktualnaData);
-			try {
-				ObjectOutputStream oos = new ObjectOutputStream(connection.getOutputStream());
-				oos.writeObject(p);
-				oos.flush();
-			} catch (IOException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
+				int idPaczki = (int) Double.parseDouble(numerPaczki);
+				System.out.println(numerPaczki);
+				// SPRAWDZANIE W BAZIE DANYCH paczki
+				PACZKA p = polaczenieBD.pobierzPaczke(idPaczki);
+				//System.out.println(p.toString());
+				try {
+					ObjectOutputStream oos = new ObjectOutputStream(connection.getOutputStream());
+					oos.writeObject(p);
+					oos.flush();
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 			}
 		} else if (komunikat.contains("ZalogujKurier")) {
 			String login = odczytWiadomosciOdKlienta();
 			String haslo = odczytWiadomosciOdKlienta();
-			// SPRAWDZANIE W BAZIE DANYCH HASLA
 			String czyHasloPoprawne = sprawdzanieHasla(login, haslo);
 			System.out.println(login + " " + haslo);
 			out.println(czyHasloPoprawne + " ... OK");
 			out.flush();
-			String wiadomosc = odczytWiadomosciOdKlienta();
-			System.out.println(wiadomosc);
-			Date aktualnaData = new Date();
-
-			Paczka p[] = new Paczka[2];
-			p[0] = new Paczka(120, (float) 12.4, 2, true, "List", true, "a", "b", 1, 2, "31-333", "imieA", "nazwiskoA",
-					"lalala", "cacasrea", 3, 4, "11-111", "imieN", "nazwiskoN", aktualnaData);
-			p[1] = new Paczka(220, (float) 12.4, 2, true, "List", true, "a", "b", 1, 2, "31-333", "imieN", "nazwiskoN",
-					"lalala", "cacasrea", 3, 4, "11-111", "imieN", "nazwiskoN", aktualnaData);
-			try {
-				ObjectOutputStream oos = new ObjectOutputStream(connection.getOutputStream());
-				oos.writeObject(p);
-				oos.flush();
-			} catch (IOException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
+			if (czyHasloPoprawne.contains("Poprawne")) {
+				String wiadomosc = odczytWiadomosciOdKlienta();
+				System.out.println(wiadomosc);
+				/*
+				 * Date aktualnaData = new Date();
+				 * 
+				 * Paczka p[] = new Paczka[2]; p[0] = new Paczka(120, (float)
+				 * 12.4, 2, true, "List", true, "a", "b", 1, 2, "31-333",
+				 * "imieA", "nazwiskoA", "lalala", "cacasrea", 3, 4, "11-111",
+				 * "imieN", "nazwiskoN", aktualnaData); p[1] = new Paczka(220,
+				 * (float) 12.4, 2, true, "List", true, "a", "b", 1, 2,
+				 * "31-333", "imieN", "nazwiskoN", "lalala", "cacasrea", 3, 4,
+				 * "11-111", "imieN", "nazwiskoN", aktualnaData);
+				 */
+				ArrayList<PACZKA> doOdebrania = polaczenieBD.paczkiDoOdebrania();
+				ArrayList<PACZKA> doDostarczenia = polaczenieBD.paczkiDoDostarczenia();
+				try {
+					ObjectOutputStream oos = new ObjectOutputStream(connection.getOutputStream());
+					oos.writeObject(doOdebrania);
+					oos.flush();
+					oos.writeObject(doDostarczenia);
+					oos.flush();
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 			}
-
 		} else if (komunikat.contains("PrzypomnijHaslo")) {
 			out.println(komunikat + " ... OK");
 			out.flush();
@@ -156,10 +175,7 @@ public class ObslugaZadan extends Thread {
 	private void ustawienieStanu(String komunikat) {
 		String id = odczytWiadomosciOdKlienta();
 		int idLiczba = (int) Double.parseDouble(id);
-		// WYSZUKUJEMY W BAZIE DANYCH PACZKI O PODANYM ID
-		// I ZMIENIAMY STAN
-		Paczka p = null;
-		// p.setStan(komunikat);
+		polaczenieBD.zmienStatusPAczki(idLiczba, komunikat);
 	}
 
 	private String odczytWiadomosciOdKlienta() {
@@ -185,14 +201,17 @@ public class ObslugaZadan extends Thread {
 	}
 
 	private String sprawdzanieHasla(String login, String haslo) {
-		String loginHaslo = "a";
-		boolean flagHaslo = true;
-		while (flagHaslo) {
-			if (loginHaslo.contains(haslo))
-				return "Poprawne";
-			else
-				return "Bledne";
-		}
-		return "Blad";
+		int idLogin = (int) Double.parseDouble(login);
+		if (polaczenieBD.czyHasloPoprawne(idLogin, haslo)) {
+			return "Poprawne";
+		} else
+			return "Bledne";
+
+		/*
+		 * String loginHaslo = "a"; boolean flagHaslo = true; while (flagHaslo)
+		 * { if (loginHaslo.contains(haslo))
+		 * 
+		 * else return "Bledne"; } return "Blad";
+		 */
 	}
 }

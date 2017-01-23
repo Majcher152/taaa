@@ -11,6 +11,8 @@ import org.jdatepicker.impl.JDatePanelImpl;
 import org.jdatepicker.impl.JDatePickerImpl;
 import org.jdatepicker.impl.UtilDateModel;
 
+import baza.PACZKA;
+
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -663,14 +665,14 @@ public class WyslijPaczke {
 					String kodAd = kod1Ad + "-" + kod2Ad;
 					String kodNa = kod1Na + "-" + kod2Na;
 					int paczka_ID = (int) Double.parseDouble(odczytWiadomosciOdSerwera());
-					Paczka p = new Paczka(paczka_ID, koszt, wagaWartosc, chckbxTak.isSelected(), rodzaj,
+					PACZKA p = new PACZKA(paczka_ID, "", koszt, wagaWartosc, chckbxTak.isSelected(), rodzaj,
 							rdbtnEkspresowa.isSelected(), (String) comboBox_miasto_ad.getSelectedItem(),
 							textField_ulica_ad.getText(), domAd, mieAd, kodAd, imieAd, nazwiskoAd,
 							(String) comboBox_miasto_na.getSelectedItem(), textField_ulica_na.getText(), domNa, mieNa,
-							kodNa, imieNa, nazwiskoNa, selectedDate);
+							kodNa, imieNa, nazwiskoNa, selectedDate,1,1 );
 					JOptionPane.showMessageDialog(null, p.toString());
 					JOptionPane.showMessageDialog(null,
-							"Prosze zapisac numer przesylki!\nNumer przesylki: " + p.getPaczkaID());
+							"Prosze zapisac numer przesylki!\nNumer przesylki: " + p.getidPaczki());
 					ObjectOutputStream oos;
 					try {
 						oos = new ObjectOutputStream(socket.getOutputStream());

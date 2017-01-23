@@ -1,4 +1,4 @@
-package proba1;
+/*package proba1;
 
 public class Nadawca extends Dane{
 
@@ -7,4 +7,4 @@ public class Nadawca extends Dane{
 		// TODO Auto-generated constructor stub
 	}
 
-}
+}*/

@@ -4,8 +4,12 @@ import java.awt.EventQueue;
 
 import javax.swing.JFrame;
 import javax.swing.SpringLayout;
+
+import baza.PACZKA;
+
 import javax.swing.JTextField;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.io.BufferedReader;
@@ -80,21 +84,21 @@ public class ZnajdzSwojaPaczke {
 		springLayout.putConstraint(SpringLayout.WEST, btnPowrot, 10, SpringLayout.WEST, frame.getContentPane());
 		springLayout.putConstraint(SpringLayout.SOUTH, btnPowrot, -10, SpringLayout.SOUTH, frame.getContentPane());
 		frame.getContentPane().add(btnPowrot);
-		
+
 		JScrollPane scrollPane = new JScrollPane();
 		springLayout.putConstraint(SpringLayout.NORTH, scrollPane, 21, SpringLayout.SOUTH, btnNewButton);
 		springLayout.putConstraint(SpringLayout.WEST, scrollPane, 37, SpringLayout.WEST, frame.getContentPane());
 		springLayout.putConstraint(SpringLayout.SOUTH, scrollPane, -6, SpringLayout.NORTH, btnPowrot);
 		springLayout.putConstraint(SpringLayout.EAST, scrollPane, 392, SpringLayout.WEST, frame.getContentPane());
 		frame.getContentPane().add(scrollPane);
-		
-				textArea_2 = new JTextArea();
-				scrollPane.setViewportView(textArea_2);
-				springLayout.putConstraint(SpringLayout.NORTH, textArea_2, 104, SpringLayout.SOUTH, btnNewButton);
-				springLayout.putConstraint(SpringLayout.WEST, textArea_2, 8, SpringLayout.WEST, btnNewButton);
-				textArea_2.setEditable(false);
-				springLayout.putConstraint(SpringLayout.EAST, textArea_2, -35, SpringLayout.EAST, frame.getContentPane());
-				springLayout.putConstraint(SpringLayout.SOUTH, textArea_2, -4, SpringLayout.NORTH, btnPowrot);
+
+		textArea_2 = new JTextArea();
+		scrollPane.setViewportView(textArea_2);
+		springLayout.putConstraint(SpringLayout.NORTH, textArea_2, 104, SpringLayout.SOUTH, btnNewButton);
+		springLayout.putConstraint(SpringLayout.WEST, textArea_2, 8, SpringLayout.WEST, btnNewButton);
+		textArea_2.setEditable(false);
+		springLayout.putConstraint(SpringLayout.EAST, textArea_2, -35, SpringLayout.EAST, frame.getContentPane());
+		springLayout.putConstraint(SpringLayout.SOUTH, textArea_2, -4, SpringLayout.NORTH, btnPowrot);
 		btnPowrot.addActionListener(myAction);
 		btnNewButton.addActionListener(myAction);
 	}
@@ -114,18 +118,27 @@ public class ZnajdzSwojaPaczke {
 				textArea_2.setText("");
 				numer = textField.getText();
 				textField.setText("");
+				if (numer.isEmpty()) {
+					JOptionPane.showMessageDialog(null, "Prosze wpisac numer");
+					break;
+				}
 				output.println(numer);
 				output.flush();
 				try {
-					Paczka p = null;
+					PACZKA p = null;
 					ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
-					p = (Paczka) ois.readObject();
+					p = (PACZKA) ois.readObject();
+					if (p == null) {
+						JOptionPane.showMessageDialog(null, "Niepoprawny numer Paczki");
+						break;
+					}
 					String paczkaWyswietlanie = p.toString();
-					textArea_2.setText(p.toString());
+					textArea_2.setText(paczkaWyswietlanie);
 				} catch (IOException | ClassNotFoundException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
+
 				break;
 			case "Powrot":
 				mess = "Powrot";
