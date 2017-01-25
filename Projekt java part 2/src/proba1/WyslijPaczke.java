@@ -34,6 +34,7 @@ import java.net.Socket;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.Properties;
 import java.awt.event.MouseWheelEvent;
 import javax.swing.ButtonGroup;
@@ -670,11 +671,15 @@ public class WyslijPaczke {
 					int paczka_ID = (int) Double.parseDouble(odczytWiadomosciOdSerwera());
 					int odbiorca_ID = (int) Double.parseDouble(odczytWiadomosciOdSerwera());
 					int nadawca_ID = (int) Double.parseDouble(odczytWiadomosciOdSerwera());
+					GregorianCalendar d1 = new GregorianCalendar(selectedDate.getYear(), selectedDate.getMonth(),
+							selectedDate.getDay());
+					d1.add(GregorianCalendar.DAY_OF_YEAR, 1);
+					Date dataDostarczenia = d1.getTime();
 					PACZKA p = new PACZKA(paczka_ID, "", koszt, wagaWartosc, chckbxTak.isSelected(), rodzaj,
 							rdbtnEkspresowa.isSelected(), (String) comboBox_miasto_ad.getSelectedItem(),
 							textField_ulica_ad.getText(), domAd, mieAd, kodAd, imieAd, nazwiskoAd,
 							(String) comboBox_miasto_na.getSelectedItem(), textField_ulica_na.getText(), domNa, mieNa,
-							kodNa, imieNa, nazwiskoNa, selectedDate, odbiorca_ID, nadawca_ID);
+							kodNa, imieNa, nazwiskoNa, selectedDate, odbiorca_ID, nadawca_ID, dataDostarczenia);
 					JOptionPane.showMessageDialog(null, p.toString());
 					JOptionPane.showMessageDialog(null,
 							"Prosze zapisac numer przesylki!\nNumer przesylki: " + p.getidPaczki());

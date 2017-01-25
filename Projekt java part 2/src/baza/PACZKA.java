@@ -27,7 +27,7 @@ public class PACZKA implements Serializable {
 	public PACZKA(int idPaczki, String stan, float koszt, double waga, boolean delikatna, String rodzaj, boolean ekspres,
 			String miastoA, String UlicaA, int nrDomA, int nrMieA, String kodA, String imieA, String nazwiskoA,
 			String miastoN, String UlicaN, int nrDomN, int nrMieN, String kodN, String imieN, String nazwiskoN,
-			Date dataPrzyjecia, int idOdbiorcy, int idNadawcy) {
+			Date dataPrzyjecia, int idOdbiorcy, int idNadawcy, Date dataDostarczenia) {
 		if (stan == "")
 			setStan("Do odebrania");
 		else
@@ -40,6 +40,7 @@ public class PACZKA implements Serializable {
 		this.rodzaj = rodzaj;
 		this.ekspres = ekspres;
 		this.dataPrzyjecia = dataPrzyjecia;
+		this.dataDostarczenia = dataDostarczenia;
 		this.idNadawcy = idNadawcy;
 		this.idOdbiorcy = idOdbiorcy;
 		setAdresat(idOdbiorcy, miastoA, UlicaA, nrDomA, nrMieA, kodA, imieA, nazwiskoA);
@@ -50,8 +51,12 @@ public class PACZKA implements Serializable {
 	public String toString() {
 		return "Numer paczki = " + idPaczki + "\nStan = " + stan + "\nKoszt = " + koszt + "\nWaga = " + waga
 				+ "\nSzklo = " + delikatna + "\nRodzaj = " + rodzaj + "\nEkspres = " + ekspres
-				+ "\nData przyjazdu kuriera = " + getDataToString(dataPrzyjecia) + "\n\nDaneAdresata:" + odbiorca
+				+ "\nData przyjazdu kuriera = " + getDataToString(dataPrzyjecia) +"\nPaczka zostanie dostarczona = "+ getDataToString(dataDostarczenia) +"\n\nDaneAdresata:" + odbiorca
 				+ "\n\nDaneNadawcy:" + nadawca + "";
+	}
+
+	public Date getDataDostarczenia() {
+		return dataDostarczenia;
 	}
 
 	public Date getDataPrzyjecia() {

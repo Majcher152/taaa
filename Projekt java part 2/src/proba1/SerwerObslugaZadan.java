@@ -34,7 +34,6 @@ public class SerwerObslugaZadan {
 			// Zwi¹zanie gniazda serwera z adresem gniazda(adres IP + port)
 			sS.bind(iSA,oczekujacy);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			System.out.println("B³¹d przy utworzeniu gniazda");
 			System.exit(1);

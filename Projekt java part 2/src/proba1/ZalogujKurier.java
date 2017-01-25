@@ -158,7 +158,12 @@ public class ZalogujKurier {
 						String[] values = nazwyDoDostarczenia;
 
 						public int getSize() {
-							return values.length;
+							try {
+								return values.length;
+							} catch (NullPointerException e) {
+								return 0;
+							}
+
 						}
 
 						public Object getElementAt(int index) {
@@ -181,43 +186,33 @@ public class ZalogujKurier {
 		springLayout.putConstraint(SpringLayout.SOUTH, textArea, -291, SpringLayout.NORTH, btnWyloguj);
 		springLayout.putConstraint(SpringLayout.NORTH, textArea, 0, SpringLayout.NORTH, panel);
 		springLayout.putConstraint(SpringLayout.WEST, textArea, 6, SpringLayout.EAST, panel);
-		
+
 		JLabel lblLogin = new JLabel("Login:");
 		GroupLayout gl_panel = new GroupLayout(panel);
-		gl_panel.setHorizontalGroup(
-			gl_panel.createParallelGroup(Alignment.LEADING)
-				.addGroup(gl_panel.createSequentialGroup()
-					.addGroup(gl_panel.createParallelGroup(Alignment.LEADING)
-						.addGroup(gl_panel.createSequentialGroup()
-							.addGap(3)
-							.addComponent(lblPrzesylka)
-							.addGap(18)
-							.addComponent(comboBox, GroupLayout.PREFERRED_SIZE, 105, GroupLayout.PREFERRED_SIZE)
-							.addPreferredGap(ComponentPlacement.RELATED, 110, Short.MAX_VALUE)
-							.addComponent(lblLogin)
-							.addPreferredGap(ComponentPlacement.UNRELATED)
-							.addComponent(textArea, GroupLayout.PREFERRED_SIZE, 71, GroupLayout.PREFERRED_SIZE))
-						.addGroup(gl_panel.createSequentialGroup()
-							.addContainerGap()
-							.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 398, Short.MAX_VALUE)))
-					.addGap(0))
-		);
-		gl_panel.setVerticalGroup(
-			gl_panel.createParallelGroup(Alignment.LEADING)
-				.addGroup(gl_panel.createSequentialGroup()
-					.addGroup(gl_panel.createParallelGroup(Alignment.LEADING)
-						.addGroup(gl_panel.createSequentialGroup()
-							.addContainerGap()
-							.addGroup(gl_panel.createParallelGroup(Alignment.BASELINE)
-								.addComponent(comboBox, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-								.addComponent(lblPrzesylka)))
-						.addGroup(gl_panel.createParallelGroup(Alignment.BASELINE)
-							.addComponent(textArea, GroupLayout.PREFERRED_SIZE, 25, GroupLayout.PREFERRED_SIZE)
-							.addComponent(lblLogin)))
-					.addPreferredGap(ComponentPlacement.RELATED)
-					.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 275, Short.MAX_VALUE)
-					.addGap(4))
-		);
+		gl_panel.setHorizontalGroup(gl_panel.createParallelGroup(Alignment.LEADING)
+				.addGroup(gl_panel.createSequentialGroup().addGroup(gl_panel.createParallelGroup(Alignment.LEADING)
+						.addGroup(gl_panel.createSequentialGroup().addGap(3).addComponent(lblPrzesylka).addGap(18)
+								.addComponent(comboBox, GroupLayout.PREFERRED_SIZE, 105, GroupLayout.PREFERRED_SIZE)
+								.addPreferredGap(ComponentPlacement.RELATED, 110, Short.MAX_VALUE)
+								.addComponent(lblLogin).addPreferredGap(ComponentPlacement.UNRELATED)
+								.addComponent(textArea, GroupLayout.PREFERRED_SIZE, 71, GroupLayout.PREFERRED_SIZE))
+						.addGroup(gl_panel.createSequentialGroup().addContainerGap().addComponent(scrollPane,
+								GroupLayout.DEFAULT_SIZE, 398, Short.MAX_VALUE)))
+						.addGap(0)));
+		gl_panel.setVerticalGroup(gl_panel.createParallelGroup(Alignment.LEADING)
+				.addGroup(gl_panel.createSequentialGroup().addGroup(gl_panel.createParallelGroup(Alignment.LEADING)
+						.addGroup(gl_panel.createSequentialGroup().addContainerGap()
+								.addGroup(gl_panel.createParallelGroup(Alignment.BASELINE)
+										.addComponent(comboBox, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE,
+												GroupLayout.PREFERRED_SIZE)
+										.addComponent(lblPrzesylka)))
+						.addGroup(
+								gl_panel.createParallelGroup(Alignment.BASELINE)
+										.addComponent(textArea, GroupLayout.PREFERRED_SIZE, 25,
+												GroupLayout.PREFERRED_SIZE)
+										.addComponent(lblLogin)))
+						.addPreferredGap(ComponentPlacement.RELATED)
+						.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 275, Short.MAX_VALUE).addGap(4)));
 
 		list = new JList();
 		list.addMouseListener(new MouseAdapter() {
@@ -227,13 +222,17 @@ public class ZalogujKurier {
 				int index = list.getSelectedIndex();
 				odswiezanieListy();
 				if (comboBox.getSelectedItem().toString().contains("Do odebrania")) {
-					if (index != -1 && doOdebrania.get(index) != null) {
-						new WyswietlaniePaczkiKurierDoOdebrania(login, socket, doOdebrania.get(index));
-					}
-				} else if (comboBox.getSelectedItem().toString().contains("Do dostarczenia")) {
-					if (index != -1 && doDostarczenia.get(index) != null) {
-						new WyswietlaniePaczkiKurier(login, socket, doDostarczenia.get(index));
-					}
+					try {
+						if (index != -1 && doOdebrania.get(index) != null) {
+							new WyswietlaniePaczkiKurierDoOdebrania(login, socket, doOdebrania.get(index));
+						}
+					} catch (IndexOutOfBoundsException e) {}
+				} else if (comboBox.getSelectedItem().toString().contains("Do dostarczenia")){
+					try {
+						if (index != -1 && doDostarczenia.get(index) != null) {
+							new WyswietlaniePaczkiKurier(login, socket, doDostarczenia.get(index));
+						}
+					} catch (IndexOutOfBoundsException e) {}
 				}
 			}
 
@@ -241,7 +240,7 @@ public class ZalogujKurier {
 
 		scrollPane.setViewportView(list);
 		panel.setLayout(gl_panel);
-		
+
 		JButton btnOdswiez = new JButton("Odswiez");
 
 		springLayout.putConstraint(SpringLayout.NORTH, btnOdswiez, 10, SpringLayout.NORTH, frame.getContentPane());
@@ -252,7 +251,8 @@ public class ZalogujKurier {
 		btnOdswiez.addActionListener(myAction);
 
 	}
-// MOZNA TEZ DODAC PRZYCISK ODSWIEZ, BEDZIE TO LEPIEJ WYGLADAC
+
+	// MOZNA TEZ DODAC PRZYCISK ODSWIEZ, BEDZIE TO LEPIEJ WYGLADAC
 	private void odswiezanieListy() {
 		output.println("Odswiez");
 		output.flush();
@@ -274,7 +274,7 @@ public class ZalogujKurier {
 		} else {
 			nazwyDoOdebrania = new String[1];
 			nazwyDoOdebrania[0] = "";
-			//scrollPane.setViewportView(l);
+			// scrollPane.setViewportView(l);
 		}
 		if (!(doDostarczenia.isEmpty())) {
 			nazwyDoDostarczenia = new String[doDostarczenia.size()];
@@ -314,6 +314,7 @@ public class ZalogujKurier {
 				public Object getElementAt(int index) {
 					return values[index];
 				}
+
 			});
 
 		}

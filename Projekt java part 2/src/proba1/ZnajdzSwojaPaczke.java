@@ -135,7 +135,6 @@ public class ZnajdzSwojaPaczke {
 					String paczkaWyswietlanie = p.toString();
 					textArea_2.setText(paczkaWyswietlanie);
 				} catch (IOException | ClassNotFoundException e1) {
-					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
 
@@ -154,7 +153,6 @@ public class ZnajdzSwojaPaczke {
 				output = new PrintWriter(socket.getOutputStream(), true);
 				input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 			} catch (IOException e2) {
-				// TODO Auto-generated catch block
 				e2.printStackTrace();
 			}
 		}
@@ -171,7 +169,6 @@ public class ZnajdzSwojaPaczke {
 						flag = false;
 					}
 				} catch (IOException e1) {
-					// TODO Auto-generated catch block
 					System.out.println("5");
 					e1.printStackTrace();
 				}

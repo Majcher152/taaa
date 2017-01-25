@@ -57,8 +57,6 @@ public class PolaczenieZBazaDanych {
 			resultSet_Paczka.next();
 			int idO = resultSet_Paczka.getInt("idOdbiorcy");
 			int idN = resultSet_Paczka.getInt("idNadawcy");
-			System.out.println(idO);
-			System.out.println(idN);
 			resultSet_Odbiorca = statement_Odbiorca.executeQuery("select * from ODBIORCA where idOdbiorcy=" + idO);
 			resultSet_Odbiorca.next();
 			resultSet_Nadawca = statement_Nadawca.executeQuery("select * from NADAWCA where idNadawcy=" + idN);
@@ -74,7 +72,8 @@ public class PolaczenieZBazaDanych {
 					resultSet_Nadawca.getString("miasto"), resultSet_Nadawca.getString("ulica"),
 					resultSet_Nadawca.getInt("nrBudynku"), resultSet_Nadawca.getInt("nrLokalu"),
 					resultSet_Nadawca.getString("kodPocztowy"), resultSet_Nadawca.getString("imie"),
-					resultSet_Nadawca.getString("nazwisko"), resultSet_Paczka.getDate("DATAPRZYJECIA"), idO, idN);
+					resultSet_Nadawca.getString("nazwisko"), resultSet_Paczka.getDate("DATAPRZYJECIA"), idO, idN,
+					resultSet_Paczka.getDate("DATADOSTARCZENIA"));
 
 		} catch (SQLException e) {
 			System.out.println("error");
@@ -100,7 +99,7 @@ public class PolaczenieZBazaDanych {
 			resultSet = statement.executeQuery("select MAX(idPaczki) from PACZKA");
 			resultSet.next();
 			id = resultSet.getInt("MAX(idPaczki)");
-			id+=1;
+			id += 1;
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} finally {
@@ -121,7 +120,7 @@ public class PolaczenieZBazaDanych {
 			resultSet = statement.executeQuery("select MAX(idodbiorcy) from ODBIORCA");
 			resultSet.next();
 			id = resultSet.getInt("MAX(idodbiorcy)");
-			id+=1;
+			id += 1;
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} finally {
@@ -131,7 +130,7 @@ public class PolaczenieZBazaDanych {
 
 		return id;
 	}
-	
+
 	public int idKolejnegoNadawcy() {
 		int id = -1;
 		Statement statement = null;
@@ -142,7 +141,7 @@ public class PolaczenieZBazaDanych {
 			resultSet = statement.executeQuery("select MAX(idnadawcy) from NADAWCA");
 			resultSet.next();
 			id = resultSet.getInt("MAX(idnadawcy)");
-			id+=1;
+			id += 1;
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} finally {
@@ -152,7 +151,7 @@ public class PolaczenieZBazaDanych {
 
 		return id;
 	}
-	
+
 	// zmien status paczki -> dzia³a jak Dorota chcia³a
 	public int zmienStatusPAczki(int idPaczki, String stan) {
 		CallableStatement callableStatement = null;
@@ -239,11 +238,7 @@ public class PolaczenieZBazaDanych {
 
 			java.util.Date utilDate2 = paczka.getDataPrzyjecia();
 			java.sql.Date dataPrzyjecia = new java.sql.Date(utilDate2.getTime());
-			// java.util.Date utilDate = new java.util.Date();
-			GregorianCalendar d1 = new GregorianCalendar(utilDate2.getYear(), utilDate2.getMonth(), utilDate2.getDay());
-			d1.add(GregorianCalendar.DAY_OF_YEAR, 1);
-			java.util.Date utilDate = d1.getTime();
-
+			java.util.Date utilDate = paczka.getDataDostarczenia();
 			java.sql.Date dataDostarczenia = new java.sql.Date(utilDate.getTime());
 			callableStatement = conection
 					.prepareCall("BEGIN dodajPaczke(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?); END;");
@@ -346,11 +341,11 @@ public class PolaczenieZBazaDanych {
 						resultSet_Nadawca.getString("miasto"), resultSet_Nadawca.getString("ulica"),
 						resultSet_Nadawca.getInt("nrBudynku"), resultSet_Nadawca.getInt("nrLokalu"),
 						resultSet_Nadawca.getString("kodPocztowy"), resultSet_Nadawca.getString("imie"),
-						resultSet_Nadawca.getString("nazwisko"), resultSet_Paczka.getDate("DATAPRZYJECIA"), idO, idN));
+						resultSet_Nadawca.getString("nazwisko"), resultSet_Paczka.getDate("DATAPRZYJECIA"), idO, idN,
+						resultSet_Paczka.getDate("DATADOSTARCZENIA")));
 
 			}
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} finally {
 			close(resultSet_Paczka);
@@ -396,8 +391,6 @@ public class PolaczenieZBazaDanych {
 							.add(new PACZKA(resultSet_Paczka.getInt("idPaczki"), resultSet_Paczka.getString("stan"),
 									resultSet_Paczka.getFloat("koszt"), resultSet_Paczka.getDouble("waga"),
 									resultSet_Paczka.getBoolean("delikatna"), resultSet_Paczka.getString("rodzaj"),
-									// resultSet_Paczka.getBoolean("delikatna"),
-									// "List",
 									resultSet_Paczka.getBoolean("ekspres"), resultSet_Odbiorca.getString("miasto"),
 									resultSet_Odbiorca.getString("ulica"), resultSet_Odbiorca.getInt("nrBudynku"),
 									resultSet_Odbiorca.getInt("nrLokalu"), resultSet_Odbiorca.getString("kodPocztowy"),
@@ -406,11 +399,10 @@ public class PolaczenieZBazaDanych {
 									resultSet_Nadawca.getInt("nrBudynku"), resultSet_Nadawca.getInt("nrLokalu"),
 									resultSet_Nadawca.getString("kodPocztowy"), resultSet_Nadawca.getString("imie"),
 									resultSet_Nadawca.getString("nazwisko"), resultSet_Paczka.getDate("DATAPRZYJECIA"),
-									idO, idN));
+									idO, idN, resultSet_Paczka.getDate("DATADOSTARCZENIA")));
 				}
 			}
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} finally {
 			close(resultSet_Paczka);
