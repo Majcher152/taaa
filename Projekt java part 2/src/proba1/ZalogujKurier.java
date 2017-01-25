@@ -37,6 +37,13 @@ import java.awt.event.ItemListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
+import javax.swing.border.LineBorder;
+import javax.swing.border.EtchedBorder;
+import javax.swing.border.CompoundBorder;
+import javax.swing.border.EmptyBorder;
+import javax.swing.border.MatteBorder;
+import javax.swing.border.SoftBevelBorder;
+import javax.swing.border.BevelBorder;
 
 public class ZalogujKurier {
 
@@ -104,6 +111,7 @@ public class ZalogujKurier {
 			}
 		}
 		frame = new JFrame();
+		frame.getContentPane().setBackground(new Color(135, 206, 250));
 		frame.addFocusListener(new FocusAdapter() {
 			@Override
 			public void focusLost(FocusEvent arg0) {
@@ -115,17 +123,19 @@ public class ZalogujKurier {
 		frame.getContentPane().setLayout(springLayout);
 
 		JButton btnWyloguj = new JButton("Wyloguj");
+		btnWyloguj.setForeground(new Color(0, 0, 0));
+		btnWyloguj.setBackground(new Color(255, 255, 255));
+		springLayout.putConstraint(SpringLayout.SOUTH, btnWyloguj, -12, SpringLayout.SOUTH, frame.getContentPane());
 		springLayout.putConstraint(SpringLayout.EAST, btnWyloguj, -10, SpringLayout.EAST, frame.getContentPane());
 		frame.getContentPane().add(btnWyloguj);
 
 		JPanel panel = new JPanel();
-		springLayout.putConstraint(SpringLayout.SOUTH, btnWyloguj, 0, SpringLayout.SOUTH, panel);
-		springLayout.putConstraint(SpringLayout.WEST, panel, 15, SpringLayout.WEST, frame.getContentPane());
-		springLayout.putConstraint(SpringLayout.EAST, panel, -149, SpringLayout.EAST, frame.getContentPane());
-		panel.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), "Konto", TitledBorder.LEADING,
-				TitledBorder.TOP, null, new Color(0, 0, 0)));
 		springLayout.putConstraint(SpringLayout.NORTH, panel, 10, SpringLayout.NORTH, frame.getContentPane());
-		springLayout.putConstraint(SpringLayout.SOUTH, panel, 349, SpringLayout.NORTH, frame.getContentPane());
+		springLayout.putConstraint(SpringLayout.WEST, panel, 10, SpringLayout.WEST, frame.getContentPane());
+		springLayout.putConstraint(SpringLayout.SOUTH, panel, 0, SpringLayout.SOUTH, btnWyloguj);
+		springLayout.putConstraint(SpringLayout.EAST, panel, -141, SpringLayout.EAST, frame.getContentPane());
+		panel.setBackground(new Color(135, 206, 250));
+		panel.setBorder(new MatteBorder(1, 1, 1, 1, (Color) new Color(0, 0, 0)));
 		frame.getContentPane().add(panel);
 
 		comboBox = new JComboBox();
@@ -180,6 +190,7 @@ public class ZalogujKurier {
 		scrollPane = new JScrollPane();
 
 		JTextArea textArea = new JTextArea();
+		textArea.setBackground(new Color(135, 206, 250));
 		textArea.setEditable(false);
 		springLayout.putConstraint(SpringLayout.EAST, textArea, -72, SpringLayout.EAST, frame.getContentPane());
 		textArea.setText(login + " ");
@@ -215,6 +226,8 @@ public class ZalogujKurier {
 						.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 275, Short.MAX_VALUE).addGap(4)));
 
 		list = new JList();
+		list.setBorder(new MatteBorder(1, 1, 1, 1, (Color) new Color(0, 0, 0)));
+		list.setBackground(new Color(135, 206, 250));
 		list.addMouseListener(new MouseAdapter() {
 
 			@Override
@@ -242,6 +255,7 @@ public class ZalogujKurier {
 		panel.setLayout(gl_panel);
 
 		JButton btnOdswiez = new JButton("Odswiez");
+		btnOdswiez.setBackground(new Color(255, 255, 255));
 
 		springLayout.putConstraint(SpringLayout.NORTH, btnOdswiez, 10, SpringLayout.NORTH, frame.getContentPane());
 		springLayout.putConstraint(SpringLayout.EAST, btnOdswiez, -10, SpringLayout.EAST, frame.getContentPane());

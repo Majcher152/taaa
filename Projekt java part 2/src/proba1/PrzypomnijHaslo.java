@@ -1,5 +1,6 @@
 package proba1;
 
+import java.awt.Color;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -48,12 +49,14 @@ public class PrzypomnijHaslo {
 	private void initialize() {
 		MyActionListener myAction = new MyActionListener();
 		frame = new JFrame();
+		frame.getContentPane().setBackground(new Color(135, 206, 250));
 		frame.setBounds(100, 100, 450, 300);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		SpringLayout springLayout = new SpringLayout();
 		frame.getContentPane().setLayout(springLayout);
 
 		JButton btnPowrot = new JButton("Powrot");
+		btnPowrot.setBackground(new Color(255, 255, 255));
 		springLayout.putConstraint(SpringLayout.WEST, btnPowrot, 10, SpringLayout.WEST, frame.getContentPane());
 		springLayout.putConstraint(SpringLayout.SOUTH, btnPowrot, -10, SpringLayout.SOUTH, frame.getContentPane());
 		frame.getContentPane().add(btnPowrot);
@@ -72,6 +75,7 @@ public class PrzypomnijHaslo {
 		textField.setColumns(10);
 
 		JButton btnSzukaj = new JButton("Szukaj");
+		btnSzukaj.setBackground(new Color(255, 255, 255));
 		springLayout.putConstraint(SpringLayout.NORTH, btnSzukaj, 19, SpringLayout.SOUTH, lblPodajSwojLogin);
 		springLayout.putConstraint(SpringLayout.WEST, btnSzukaj, 10, SpringLayout.WEST, frame.getContentPane());
 		frame.getContentPane().add(btnSzukaj);

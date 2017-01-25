@@ -24,6 +24,9 @@ import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.FormSpecs;
 import com.jgoodies.forms.layout.RowSpec;
 import javax.swing.SpringLayout;
+import java.awt.SystemColor;
+import java.awt.Color;
+import javax.swing.UIManager;
 
 public class StronaGlowna {
 
@@ -60,6 +63,9 @@ public class StronaGlowna {
 	private void initialize() {
 		MyActionListener myAction = new MyActionListener();
 		frame = new JFrame();
+		frame.getContentPane().setBackground(new Color(135, 206, 250));
+		frame.setBackground(SystemColor.activeCaption);
+		frame.setForeground(SystemColor.inactiveCaptionBorder);
 		frame.setBounds(100, 100, 450, 300);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
@@ -73,34 +79,48 @@ public class StronaGlowna {
 		btnwyslijPaczke.addActionListener(myAction);
 		JButton btnznajdzSwojaPaczke = new JButton("3. Znajdz swoja paczke");
 		btnznajdzSwojaPaczke.addActionListener(myAction);
-		SpringLayout springLayout = new SpringLayout();
-		springLayout.putConstraint(SpringLayout.NORTH, btnznajdzSwojaPaczke, 6, SpringLayout.SOUTH, btnwyslijPaczke);
-		springLayout.putConstraint(SpringLayout.EAST, btnwyslijPaczke, 0, SpringLayout.EAST, btnlogowanie);
-		springLayout.putConstraint(SpringLayout.WEST, btnznajdzSwojaPaczke, 6, SpringLayout.WEST,
-				frame.getContentPane());
-		springLayout.putConstraint(SpringLayout.NORTH, btnwyslijPaczke, 6, SpringLayout.SOUTH, btnlogowanie);
-		springLayout.putConstraint(SpringLayout.WEST, btnwyslijPaczke, 6, SpringLayout.WEST, frame.getContentPane());
-		springLayout.putConstraint(SpringLayout.EAST, btnlogowanie, 0, SpringLayout.EAST, btnznajdzSwojaPaczke);
-		springLayout.putConstraint(SpringLayout.NORTH, lblCoChciabyWykona, 23, SpringLayout.NORTH,
-				frame.getContentPane());
-		springLayout.putConstraint(SpringLayout.WEST, lblCoChciabyWykona, 6, SpringLayout.WEST, frame.getContentPane());
-		springLayout.putConstraint(SpringLayout.NORTH, lblNewLabel, 6, SpringLayout.NORTH, frame.getContentPane());
-		springLayout.putConstraint(SpringLayout.WEST, lblNewLabel, 106, SpringLayout.WEST, frame.getContentPane());
-		springLayout.putConstraint(SpringLayout.NORTH, btnlogowanie, 40, SpringLayout.NORTH, frame.getContentPane());
-		springLayout.putConstraint(SpringLayout.WEST, btnlogowanie, 6, SpringLayout.WEST, frame.getContentPane());
-		frame.getContentPane().setLayout(springLayout);
-		frame.getContentPane().add(btnlogowanie);
-		frame.getContentPane().add(btnwyslijPaczke);
-		frame.getContentPane().add(btnznajdzSwojaPaczke);
 
 		JButton btnwyjscie = new JButton("4. Wyjscie");
-		springLayout.putConstraint(SpringLayout.NORTH, btnwyjscie, 6, SpringLayout.SOUTH, btnznajdzSwojaPaczke);
-		springLayout.putConstraint(SpringLayout.WEST, btnwyjscie, 6, SpringLayout.WEST, frame.getContentPane());
-		springLayout.putConstraint(SpringLayout.EAST, btnwyjscie, 0, SpringLayout.EAST, btnlogowanie);
+		btnwyjscie.setBackground(UIManager.getColor("ToggleButton.light"));
 		btnwyjscie.addActionListener(myAction);
-		frame.getContentPane().add(btnwyjscie);
-		frame.getContentPane().add(lblNewLabel);
-		frame.getContentPane().add(lblCoChciabyWykona);
+		GroupLayout groupLayout = new GroupLayout(frame.getContentPane());
+		groupLayout.setHorizontalGroup(
+			groupLayout.createParallelGroup(Alignment.LEADING)
+				.addGroup(groupLayout.createSequentialGroup()
+					.addGap(106)
+					.addComponent(lblNewLabel))
+				.addGroup(groupLayout.createSequentialGroup()
+					.addGap(6)
+					.addComponent(lblCoChciabyWykona))
+				.addGroup(groupLayout.createSequentialGroup()
+					.addGap(33)
+					.addComponent(btnlogowanie, GroupLayout.PREFERRED_SIZE, 369, GroupLayout.PREFERRED_SIZE))
+				.addGroup(groupLayout.createSequentialGroup()
+					.addGap(33)
+					.addGroup(groupLayout.createParallelGroup(Alignment.LEADING, false)
+						.addComponent(btnznajdzSwojaPaczke, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 369, Short.MAX_VALUE)
+						.addComponent(btnwyslijPaczke, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 369, Short.MAX_VALUE)
+						.addComponent(btnwyjscie, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+					.addGap(32))
+		);
+		groupLayout.setVerticalGroup(
+			groupLayout.createParallelGroup(Alignment.LEADING)
+				.addGroup(groupLayout.createSequentialGroup()
+					.addGap(6)
+					.addComponent(lblNewLabel)
+					.addGap(3)
+					.addComponent(lblCoChciabyWykona)
+					.addGap(18)
+					.addComponent(btnlogowanie)
+					.addGap(11)
+					.addComponent(btnwyslijPaczke)
+					.addPreferredGap(ComponentPlacement.UNRELATED)
+					.addComponent(btnznajdzSwojaPaczke)
+					.addPreferredGap(ComponentPlacement.UNRELATED)
+					.addComponent(btnwyjscie)
+					.addGap(81))
+		);
+		frame.getContentPane().setLayout(groupLayout);
 	}
 
 	private class MyActionListener implements ActionListener {

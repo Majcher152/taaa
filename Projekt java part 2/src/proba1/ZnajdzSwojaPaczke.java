@@ -1,5 +1,6 @@
 package proba1;
 
+import java.awt.Color;
 import java.awt.EventQueue;
 
 import javax.swing.JFrame;
@@ -55,6 +56,7 @@ public class ZnajdzSwojaPaczke {
 	private void initialize() {
 		MyActionListener myAction = new MyActionListener();
 		frame = new JFrame();
+		frame.getContentPane().setBackground(new Color(135, 206, 250));
 		frame.setBounds(100, 100, 450, 300);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		SpringLayout springLayout = new SpringLayout();
@@ -75,12 +77,14 @@ public class ZnajdzSwojaPaczke {
 		frame.getContentPane().add(lblPodajNumerPaczki);
 
 		JButton btnNewButton = new JButton("Wyszukaj");
+		btnNewButton.setBackground(new Color(255, 255, 255));
 
 		springLayout.putConstraint(SpringLayout.NORTH, btnNewButton, -1, SpringLayout.NORTH, textField);
 		springLayout.putConstraint(SpringLayout.EAST, btnNewButton, -21, SpringLayout.WEST, textField);
 		frame.getContentPane().add(btnNewButton);
 
 		JButton btnPowrot = new JButton("Powrot");
+		btnPowrot.setBackground(new Color(255, 255, 255));
 		springLayout.putConstraint(SpringLayout.WEST, btnPowrot, 10, SpringLayout.WEST, frame.getContentPane());
 		springLayout.putConstraint(SpringLayout.SOUTH, btnPowrot, -10, SpringLayout.SOUTH, frame.getContentPane());
 		frame.getContentPane().add(btnPowrot);

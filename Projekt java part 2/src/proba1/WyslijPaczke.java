@@ -1,5 +1,6 @@
 package proba1;
 
+import java.awt.Color;
 import java.awt.EventQueue;
 import javax.swing.JFrame;
 import javax.swing.SpringLayout;
@@ -140,6 +141,7 @@ public class WyslijPaczke {
 	private void initialize() {
 		MyActionListener myAction = new MyActionListener();
 		frame = new JFrame();
+		frame.getContentPane().setBackground(new Color(135, 206, 250));
 		frame.setBounds(100, 100, 641, 680);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
@@ -180,6 +182,7 @@ public class WyslijPaczke {
 		JLabel lblKg = new JLabel("kg");
 		JLabel lblSzklo = new JLabel("Szklo:");
 		chckbxTak = new JCheckBox("Tak");
+		chckbxTak.setBackground(new Color(135, 206, 250));
 		chckbxTak.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				float waga_cena = 0;
@@ -199,6 +202,7 @@ public class WyslijPaczke {
 		JLabel lblRodzaj = new JLabel("Rodzaj:");
 
 		JRadioButton rdbtnList = new JRadioButton("Koperta");
+		rdbtnList.setBackground(new Color(135, 206, 250));
 		rdbtnList.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				float waga_cena = 0;
@@ -211,6 +215,7 @@ public class WyslijPaczke {
 		});
 		buttonGroup_wielkosc_przesylki.add(rdbtnList);
 		JRadioButton rdbtnPaczka = new JRadioButton("Paczka");
+		rdbtnPaczka.setBackground(new Color(135, 206, 250));
 		rdbtnPaczka.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				float waga_cena = 0;
@@ -224,6 +229,7 @@ public class WyslijPaczke {
 		});
 		buttonGroup_wielkosc_przesylki.add(rdbtnPaczka);
 		JRadioButton rdbtnCosInnego = new JRadioButton("Paleta");
+		rdbtnCosInnego.setBackground(new Color(135, 206, 250));
 		rdbtnCosInnego.addItemListener(new ItemListener() {
 			public void itemStateChanged(ItemEvent arg0) {
 				float waga_cena = 0;
@@ -239,6 +245,7 @@ public class WyslijPaczke {
 		JLabel lblPrzesyka = new JLabel("Przesylka:");
 
 		rdbtnEkspresowa = new JRadioButton("ekspresowa");
+		rdbtnEkspresowa.setBackground(new Color(135, 206, 250));
 		rdbtnEkspresowa.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				float waga_cena = 0;
@@ -250,6 +257,7 @@ public class WyslijPaczke {
 		});
 		buttonGroup_1.add(rdbtnEkspresowa);
 		JRadioButton rdbtnZwyka = new JRadioButton("zwykla");
+		rdbtnZwyka.setBackground(new Color(135, 206, 250));
 		rdbtnZwyka.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				float waga_cena = 0;
@@ -294,9 +302,11 @@ public class WyslijPaczke {
 		lblZ.setFont(new Font("Tahoma", Font.PLAIN, 18));
 
 		btnZamwKuriera = new JButton("Zamow kuriera");
+		btnZamwKuriera.setBackground(new Color(255, 255, 255));
 		btnZamwKuriera.setFont(new Font("Tahoma", Font.BOLD, 15));
 
 		btnPowrot = new JButton("Powrot");
+		btnPowrot.setBackground(new Color(255, 255, 255));
 
 		textField_kod_na = new JTextField();
 		textField_kod_na.setColumns(10);
@@ -339,6 +349,7 @@ public class WyslijPaczke {
 				new String[] { "Krakow", "Warszawa", "Katowice", "Poznan", "Wroclaw", "Gdansk", "Gdynia" }));
 
 		chckbx_mie_ad = new JCheckBox("");
+		chckbx_mie_ad.setBackground(new Color(135, 206, 250));
 		chckbx_mie_ad.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				if (chckbx_mie_ad.isSelected())
@@ -351,6 +362,7 @@ public class WyslijPaczke {
 		});
 
 		chckbx_mie_na = new JCheckBox("");
+		chckbx_mie_na.setBackground(new Color(135, 206, 250));
 		chckbx_mie_na.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if (chckbx_mie_na.isSelected())

@@ -1,5 +1,6 @@
 package proba1;
 
+import java.awt.Color;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -49,6 +50,7 @@ public class Logowanie {
 	private void initialize() {
 		MyActionListener myAction = new MyActionListener();
 		frame = new JFrame();
+		frame.getContentPane().setBackground(new Color(135, 206, 250));
 		frame.setBounds(100, 100, 450, 300);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		SpringLayout springLayout = new SpringLayout();
@@ -77,12 +79,14 @@ public class Logowanie {
 		btnNewButton.addActionListener(myAction);
 
 		JButton btnPowrot = new JButton("Powrot");
+		btnPowrot.setBackground(new Color(255, 255, 255));
 		springLayout.putConstraint(SpringLayout.WEST, btnPowrot, 10, SpringLayout.WEST, frame.getContentPane());
 		springLayout.putConstraint(SpringLayout.SOUTH, btnPowrot, -10, SpringLayout.SOUTH, frame.getContentPane());
 		frame.getContentPane().add(btnPowrot);
 		btnPowrot.addActionListener(myAction);
 
 		JButton btnZaloguj = new JButton("Zaloguj");
+		btnZaloguj.setBackground(new Color(255, 255, 255));
 		springLayout.putConstraint(SpringLayout.NORTH, btnZaloguj, 23, SpringLayout.SOUTH, lblHaslo);
 		springLayout.putConstraint(SpringLayout.NORTH, btnNewButton, 0, SpringLayout.NORTH, btnZaloguj);
 		springLayout.putConstraint(SpringLayout.WEST, btnNewButton, 25, SpringLayout.EAST, btnZaloguj);

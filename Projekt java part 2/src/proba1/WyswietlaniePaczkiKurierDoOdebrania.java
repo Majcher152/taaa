@@ -1,5 +1,6 @@
 package proba1;
 
+import java.awt.Color;
 import java.awt.EventQueue;
 import javax.swing.JFrame;
 import javax.swing.SpringLayout;
@@ -25,6 +26,7 @@ import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.WindowAdapter;
 import java.awt.event.WindowFocusListener;
 import java.awt.event.WindowEvent;
 
@@ -64,8 +66,19 @@ public class WyswietlaniePaczkiKurierDoOdebrania {
 	 */
 	private void initialize() {
 		MyActionListener myAction = new MyActionListener();
-
 		frame = new JFrame();
+		frame.getContentPane().setBackground(new Color(0, 250, 154));
+		frame.addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowClosing(WindowEvent arg0) {
+				int ans = JOptionPane.showConfirmDialog(null, "Czy na pewno chcesz opuscic program?");
+				if (ans == JOptionPane.YES_OPTION) {
+					// Zamkniêcie okna
+					frame.dispose();
+					frame.setVisible(false);
+				}
+			}
+		});
 		frame.addWindowFocusListener(new WindowFocusListener() {
 			public void windowGainedFocus(WindowEvent arg0) {
 			}
@@ -83,7 +96,7 @@ public class WyswietlaniePaczkiKurierDoOdebrania {
 		});
 
 		frame.setBounds(100, 100, 450, 353);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
 		JLabel lblNewLabel = new JLabel(paczkaDoWyswietlenia.getidPaczki() + "");
 
@@ -92,6 +105,7 @@ public class WyswietlaniePaczkiKurierDoOdebrania {
 		JLabel lblZmienStan = new JLabel("Zmien stan:");
 
 		JButton btnPowrot = new JButton("Zamknij");
+		btnPowrot.setBackground(new Color(255, 255, 255));
 		btnPowrot.addActionListener(myAction);
 
 		btnNewButton = new JButton("Do dostarczenia");
@@ -140,7 +154,7 @@ public class WyswietlaniePaczkiKurierDoOdebrania {
 			int tmp;
 			switch (co) {
 			case "Do dostarczenia":
-				
+
 				komunikat = true;
 				tmp = JOptionPane.showConfirmDialog(null, "Na pewno?");
 				if (tmp == JOptionPane.YES_OPTION) {

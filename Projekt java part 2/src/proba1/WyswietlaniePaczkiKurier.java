@@ -32,6 +32,7 @@ import java.awt.event.WindowFocusListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowAdapter;
 import javax.swing.JOptionPane;
+import java.awt.Color;
 
 public class WyswietlaniePaczkiKurier {
 
@@ -73,17 +74,15 @@ public class WyswietlaniePaczkiKurier {
 		MyActionListener myAction = new MyActionListener();
 
 		frame = new JFrame();
+		frame.getContentPane().setBackground(new Color(0, 250, 154));
 		frame.addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosing(WindowEvent arg0) {
-				//JOptionPane.showMessageDialog(null, "Pierwsza czesc kodu pocztowego to dwie cyfry!");
-
-				// powrotDoZalogujkurier = true;
-				// frame.setVisible(false);
 				int ans = JOptionPane.showConfirmDialog(null, "Czy na pewno chcesz opuscic program?");
 				if (ans == JOptionPane.YES_OPTION) {
 					// Zamkniêcie okna
 					frame.dispose();
+					frame.setVisible(false);
 				}
 			}
 		});
@@ -104,7 +103,7 @@ public class WyswietlaniePaczkiKurier {
 		});
 
 		frame.setBounds(100, 100, 450, 353);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
 		JLabel lblNewLabel = new JLabel(paczkaDoWyswietlenia.getidPaczki() + "");
 
@@ -113,6 +112,7 @@ public class WyswietlaniePaczkiKurier {
 		JLabel lblZmienStan = new JLabel("Zmien stan:");
 
 		JButton btnPowrot = new JButton("Zamknij");
+		btnPowrot.setBackground(new Color(255, 255, 255));
 		btnPowrot.addActionListener(myAction);
 
 		btnNewButton = new JButton("Przekazana do nadania");
