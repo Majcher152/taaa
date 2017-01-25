@@ -29,7 +29,7 @@ public class PACZKA implements Serializable {
 			String miastoN, String UlicaN, int nrDomN, int nrMieN, String kodN, String imieN, String nazwiskoN,
 			Date dataPrzyjecia, int idOdbiorcy, int idNadawcy) {
 		if (stan == "")
-			setStan("Do Odebrania");
+			setStan("Do odebrania");
 		else
 			this.stan = stan;
 

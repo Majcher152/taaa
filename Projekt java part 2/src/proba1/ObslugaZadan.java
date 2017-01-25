@@ -16,7 +16,6 @@ import java.sql.*;
 
 public class ObslugaZadan extends Thread {
 
-	private int paczka_ID = 0;
 	// Strumienie gniazda komunikacji z klientem(odczyt + zapis)
 	private BufferedReader in = null;
 	private PrintWriter out = null;
@@ -46,7 +45,7 @@ public class ObslugaZadan extends Thread {
 		}
 		while (flag) {
 			try {
-				String komunikat = null;
+				String komunikat = "";
 				if (in.ready()) {
 					komunikat = in.readLine();
 					System.out.println(komunikat);
@@ -72,10 +71,19 @@ public class ObslugaZadan extends Thread {
 	private void ObslugaKomunikatowOdKlienta(String komunikat) {
 
 		if (komunikat.contains("Wyslij Paczke")) {
-			paczka_ID++;
+			int paczka_ID = -1;
+			int odbiorca_ID = -1;
+			int nadawca_ID = -1;
 			out.println(komunikat + " ... OK");
 			out.flush();
+			paczka_ID = polaczenieBD.idKolejnejPaczki();
 			out.println(paczka_ID);
+			out.flush();
+			odbiorca_ID = polaczenieBD.idKolejnegoOdbiorcy();
+			out.println(odbiorca_ID);
+			out.flush();
+			nadawca_ID = polaczenieBD.idKolejnegoNadawcy();
+			out.println(nadawca_ID);
 			out.flush();
 			try {
 				ObjectInputStream ois = new ObjectInputStream(connection.getInputStream());
@@ -84,7 +92,6 @@ public class ObslugaZadan extends Thread {
 				if (!(p.equals(null))) {
 					// dodanie paczki do bazy danych
 					polaczenieBD.dodajPaczke(p);
-					System.out.println(p.toString());
 				}
 			} catch (Exception exc) {
 				exc.printStackTrace();
@@ -105,7 +112,7 @@ public class ObslugaZadan extends Thread {
 				System.out.println(numerPaczki);
 				// SPRAWDZANIE W BAZIE DANYCH paczki
 				PACZKA p = polaczenieBD.pobierzPaczke(idPaczki);
-				//System.out.println(p.toString());
+				// System.out.println(p.toString());
 				try {
 					ObjectOutputStream oos = new ObjectOutputStream(connection.getOutputStream());
 					oos.writeObject(p);
@@ -125,17 +132,6 @@ public class ObslugaZadan extends Thread {
 			if (czyHasloPoprawne.contains("Poprawne")) {
 				String wiadomosc = odczytWiadomosciOdKlienta();
 				System.out.println(wiadomosc);
-				/*
-				 * Date aktualnaData = new Date();
-				 * 
-				 * Paczka p[] = new Paczka[2]; p[0] = new Paczka(120, (float)
-				 * 12.4, 2, true, "List", true, "a", "b", 1, 2, "31-333",
-				 * "imieA", "nazwiskoA", "lalala", "cacasrea", 3, 4, "11-111",
-				 * "imieN", "nazwiskoN", aktualnaData); p[1] = new Paczka(220,
-				 * (float) 12.4, 2, true, "List", true, "a", "b", 1, 2,
-				 * "31-333", "imieN", "nazwiskoN", "lalala", "cacasrea", 3, 4,
-				 * "11-111", "imieN", "nazwiskoN", aktualnaData);
-				 */
 				ArrayList<PACZKA> doOdebrania = polaczenieBD.paczkiDoOdebrania();
 				ArrayList<PACZKA> doDostarczenia = polaczenieBD.paczkiDoDostarczenia();
 				try {
@@ -145,24 +141,45 @@ public class ObslugaZadan extends Thread {
 					oos.writeObject(doDostarczenia);
 					oos.flush();
 				} catch (IOException e1) {
-					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
 			}
 		} else if (komunikat.contains("PrzypomnijHaslo")) {
 			out.println(komunikat + " ... OK");
 			out.flush();
+			String podpowiedz = "";
 			String login = odczytWiadomosciOdKlienta();
-			System.out.println(login);
-			// SPRAWDZANIE W BAZIE DANYCH podpowiedzi do hasla
-			out.println("hehehehhe");
+			if (!(login.equals(""))) {
+				int idLoginu = (int) Double.parseDouble(login);
+				System.out.println(login);
+				podpowiedz = polaczenieBD.wyszukajPodpowiedz(idLoginu);
+			}
+			out.println(podpowiedz);
 			out.flush();
 
 		} else if (komunikat.contains("Przekazana do nadania") || komunikat.contains("W drodze do miasta adresata")
-				|| komunikat.contains("Odebrana") || komunikat.contains("W punkcie odbioru")
-				|| komunikat.contains("Przekazana do odebrania")) {
+				|| komunikat.contains("W punkcie odbioru") || komunikat.contains("Przekazana do odebrania")
+				|| komunikat.contains("Do dostarczenia")) {
 			ustawienieStanu(komunikat);
-		} else if (komunikat.contains("Powrot") || komunikat.contains("Wyloguj")) {
+		} else if (komunikat.contains("Odebrana")) {
+			usuwaniePrzesylki();
+		} else if (komunikat.contains("Odswiez")) {
+
+			ArrayList<PACZKA> doOdebrania = polaczenieBD.paczkiDoOdebrania();
+			ArrayList<PACZKA> doDostarczenia = polaczenieBD.paczkiDoDostarczenia();
+			try {
+				ObjectOutputStream oos = new ObjectOutputStream(connection.getOutputStream());
+				oos.writeObject(doOdebrania);
+				oos.flush();
+				oos.writeObject(doDostarczenia);
+				oos.flush();
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+		} else if (komunikat.contains("Powrot") || komunikat.contains("Wyloguj"))
+
+		{
 			out.println(komunikat + " ... OK");
 			out.flush();
 		} else if (komunikat.contains("Wyjscie")) {
@@ -170,6 +187,13 @@ public class ObslugaZadan extends Thread {
 			out.flush();
 
 		}
+	}
+
+	private void usuwaniePrzesylki() {
+		String id = odczytWiadomosciOdKlienta();
+		int idLiczba = (int) Double.parseDouble(id);
+		System.out.println(idLiczba);
+		polaczenieBD.usunPaczke(idLiczba);
 	}
 
 	private void ustawienieStanu(String komunikat) {
@@ -201,17 +225,15 @@ public class ObslugaZadan extends Thread {
 	}
 
 	private String sprawdzanieHasla(String login, String haslo) {
-		int idLogin = (int) Double.parseDouble(login);
+		int idLogin = -1;
+		try {
+			idLogin = (int) Double.parseDouble(login);
+		} catch (NumberFormatException e2) {
+
+		}
 		if (polaczenieBD.czyHasloPoprawne(idLogin, haslo)) {
 			return "Poprawne";
 		} else
 			return "Bledne";
-
-		/*
-		 * String loginHaslo = "a"; boolean flagHaslo = true; while (flagHaslo)
-		 * { if (loginHaslo.contains(haslo))
-		 * 
-		 * else return "Bledne"; } return "Blad";
-		 */
 	}
 }

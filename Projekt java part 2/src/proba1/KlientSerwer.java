@@ -36,8 +36,6 @@ public class KlientSerwer extends Thread {
 		}	
 	}
 
-
-
 	public void run() {
 		new StronaGlowna(sock);
 	}

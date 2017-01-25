@@ -8,7 +8,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 
 import baza.NADAWCA;
 import baza.ODBIORCA;
@@ -37,34 +39,34 @@ public class PolaczenieZBazaDanych {
 		}
 	}
 
-	// wyszukaj paczke
+	// wyszukaj paczke - > dziala jak Dorota chciala
 	public PACZKA pobierzPaczke(int idPaczki) {
 		PACZKA paczka = null;
-		Statement statement = null;
+		Statement statement_Paczka = null;
+		Statement statement_Odbiorca = null;
+		Statement statement_Nadawca = null;
 		ResultSet resultSet_Paczka = null;
 		ResultSet resultSet_Odbiorca = null;
 		ResultSet resultSet_Nadawca = null;
 		try {
-			statement = conection.createStatement();
+			statement_Paczka = conection.createStatement();
+			statement_Odbiorca = conection.createStatement();
+			statement_Nadawca = conection.createStatement();
 
-			//resultSet_Paczka = statement.executeQuery("select * from PACZKA where idPaczki=" + idPaczki + ";");
-			resultSet_Paczka = statement.executeQuery("select * from PACZKA;");
-
+			resultSet_Paczka = statement_Paczka.executeQuery("select * from PACZKA where idPaczki=" + idPaczki);
 			resultSet_Paczka.next();
-			
-			System.out.println(idPaczki);
 			int idO = resultSet_Paczka.getInt("idOdbiorcy");
 			int idN = resultSet_Paczka.getInt("idNadawcy");
 			System.out.println(idO);
 			System.out.println(idN);
-			resultSet_Odbiorca = statement.executeQuery("select * from ODBIORCA where idOdbiorcy=" + idO + ";");
+			resultSet_Odbiorca = statement_Odbiorca.executeQuery("select * from ODBIORCA where idOdbiorcy=" + idO);
 			resultSet_Odbiorca.next();
-			resultSet_Nadawca = statement.executeQuery("select * from ODBIORCA where idNadawcy=" + idN + ";");
+			resultSet_Nadawca = statement_Nadawca.executeQuery("select * from NADAWCA where idNadawcy=" + idN);
 			resultSet_Nadawca.next();
 
 			paczka = new PACZKA(resultSet_Paczka.getInt("idPaczki"), resultSet_Paczka.getString("stan"),
 					resultSet_Paczka.getFloat("koszt"), resultSet_Paczka.getDouble("waga"),
-					resultSet_Paczka.getBoolean("szklo"), resultSet_Paczka.getString("rodzaj"),
+					resultSet_Paczka.getBoolean("delikatna"), resultSet_Paczka.getString("rodzaj"),
 					resultSet_Paczka.getBoolean("ekspres"), resultSet_Odbiorca.getString("miasto"),
 					resultSet_Odbiorca.getString("ulica"), resultSet_Odbiorca.getInt("nrBudynku"),
 					resultSet_Odbiorca.getInt("nrLokalu"), resultSet_Odbiorca.getString("kodPocztowy"),
@@ -72,38 +74,93 @@ public class PolaczenieZBazaDanych {
 					resultSet_Nadawca.getString("miasto"), resultSet_Nadawca.getString("ulica"),
 					resultSet_Nadawca.getInt("nrBudynku"), resultSet_Nadawca.getInt("nrLokalu"),
 					resultSet_Nadawca.getString("kodPocztowy"), resultSet_Nadawca.getString("imie"),
-					resultSet_Nadawca.getString("nazwisko"), resultSet_Paczka.getDate("data"), idO, idN);
+					resultSet_Nadawca.getString("nazwisko"), resultSet_Paczka.getDate("DATAPRZYJECIA"), idO, idN);
 
 		} catch (SQLException e) {
-System.out.println("chuj");
-			 e.printStackTrace();
+			System.out.println("error");
+			e.printStackTrace();
 		} finally {
 			close(resultSet_Paczka);
 			close(resultSet_Odbiorca);
 			close(resultSet_Nadawca);
-			close(statement);
+			close(statement_Paczka);
+			close(statement_Odbiorca);
+			close(statement_Nadawca);
 		}
 		return paczka;
 	}
 
-	// zmien status paczki
+	public int idKolejnejPaczki() {
+		int id = -1;
+		Statement statement = null;
+		ResultSet resultSet = null;
+
+		try {
+			statement = conection.createStatement();
+			resultSet = statement.executeQuery("select MAX(idPaczki) from PACZKA");
+			resultSet.next();
+			id = resultSet.getInt("MAX(idPaczki)");
+			id+=1;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			close(resultSet);
+			close(statement);
+		}
+
+		return id;
+	}
+
+	public int idKolejnegoOdbiorcy() {
+		int id = -1;
+		Statement statement = null;
+		ResultSet resultSet = null;
+
+		try {
+			statement = conection.createStatement();
+			resultSet = statement.executeQuery("select MAX(idodbiorcy) from ODBIORCA");
+			resultSet.next();
+			id = resultSet.getInt("MAX(idodbiorcy)");
+			id+=1;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			close(resultSet);
+			close(statement);
+		}
+
+		return id;
+	}
+	
+	public int idKolejnegoNadawcy() {
+		int id = -1;
+		Statement statement = null;
+		ResultSet resultSet = null;
+
+		try {
+			statement = conection.createStatement();
+			resultSet = statement.executeQuery("select MAX(idnadawcy) from NADAWCA");
+			resultSet.next();
+			id = resultSet.getInt("MAX(idnadawcy)");
+			id+=1;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			close(resultSet);
+			close(statement);
+		}
+
+		return id;
+	}
+	
+	// zmien status paczki -> dzia³a jak Dorota chcia³a
 	public int zmienStatusPAczki(int idPaczki, String stan) {
-		/*
-		 * Statement statement = null; try { statement =
-		 * conection.createStatement();
-		 * statement.executeUpdate("update PACZKA set stan=" + stan +
-		 * " where idPaczki='" + idPaczki + "'"); } catch (SQLException e) {
-		 * e.printStackTrace(); return 0; } finally { close(statement); } return
-		 * 1;
-		 */
 		CallableStatement callableStatement = null;
 		try {
-			// 1 -> idMagazynu
-			// 2 -> idPunktu
-			// 3 -> idKuriera
-			// data dostarczenia
-			callableStatement = conection.prepareCall("{call zmienStatusPaczki(" + idPaczki + ", " + stan + ")}");
-
+			callableStatement = conection.prepareCall("BEGIN zmienStatusPaczki(?,?); END;");
+			callableStatement.setInt(1, idPaczki);
+			callableStatement.setString(2, stan);
+			callableStatement.execute();
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return 0;
@@ -113,79 +170,110 @@ System.out.println("chuj");
 		return 1;
 	}
 
-	// usun paczke
-	public int usunPaczke(String idPaczki) {
-		Statement statement = null;
+	// usun paczke -> dziala jak Dorota chciala
+	public int usunPaczke(int idPaczki) {
+		Statement statement_Paczka = null;
+		Statement statement_Odbiorca = null;
+		Statement statement_Nadawca = null;
+		ResultSet resultSet = null;
+		int idO;
+		int idN;
 		try {
-			statement = conection.createStatement();
-			statement.executeUpdate("delete from PACZKA where paczkaID =" + idPaczki);
+			statement_Paczka = conection.createStatement();
+			statement_Odbiorca = conection.createStatement();
+			statement_Nadawca = conection.createStatement();
+
+			resultSet = statement_Paczka.executeQuery("select * from PACZKA where IDpaczki = " + idPaczki);
+			resultSet.next();
+			idO = resultSet.getInt("idOdbiorcy");
+			idN = resultSet.getInt("idNadawcy");
+			System.out.println(idO + " " + idN);
+			statement_Paczka.executeUpdate("delete from PACZKA where IDpaczki = " + idPaczki);
+			statement_Odbiorca.executeUpdate("delete from ODBIORCA where IDODBIORCY = " + idO);
+			statement_Nadawca.executeUpdate("delete from NADAWCA where IDNADAWCY = " + idN);
 
 		} catch (SQLException e) {
 			return 0;
 		} finally {
-			close(statement);
+			close(statement_Paczka);
+			close(statement_Odbiorca);
+			close(statement_Nadawca);
+			close(resultSet);
 		}
 		return 1;
 	}
 
-	// dodaj paczke
-	// dodaj zamowienie
-	public int dodajPaczke(PACZKA paczka) {
-		/*
-		 * Statement statement_Paczka = null; Statement statement_Nadawca =
-		 * null; Statement statement_Odbiorca = null; try { statement_Paczka =
-		 * conection.createStatement(); // 1 -> idPunktu // 2 -> idKuriera //
-		 * 3-> idMagazynu // 4 -> dataDostarczenia
-		 * statement_Paczka.executeUpdate("insert into PACZKA values('','" +
-		 * paczka.getidPaczki() + "','" + 1 + "'," + 2 + "," +
-		 * paczka.getIdNadawcy() + "','" + paczka.getIdOdbiorcy() + "'," +
-		 * paczka.getData() + "','" + 4 + "'," + paczka.getStan() + "','" +
-		 * paczka.getKoszt() + "'," + paczka.getWaga() + "','" +
-		 * paczka.isEkspres() + "'," + paczka.isSzklo() + ")");
-		 * 
-		 * statement_Nadawca = conection.createStatement();
-		 * 
-		 * statement_Nadawca.executeUpdate("insert into NADAWCA values('','" +
-		 * paczka.getidPaczki() + "','" + 1 + "'," + 2 + "," +
-		 * paczka.getIdNadawcy() + "','" + paczka.getIdOdbiorcy() + "'," +
-		 * paczka.getData() + "','" + 4 + "'," + paczka.getStan() + "','" +
-		 * paczka.getKoszt() + "'," + paczka.getWaga() + "','" +
-		 * paczka.isEkspres() + "'," + paczka.isSzklo() + ")");
-		 * 
-		 * statement_Odbiorca = conection.createStatement(); } catch (
-		 * 
-		 * SQLException e) { e.printStackTrace(); return 0; } finally {
-		 * close(statement_Paczka); close(statement_Nadawca);
-		 * close(statement_Odbiorca); } return 1;
-		 */
+	// wyszukaj podpowiedz ->dziala jak Dorota chciala
+	public String wyszukajPodpowiedz(int idKuriera) {
+		String podpowiedz = "";
+		Statement statement = null;
+		ResultSet resultSet = null;
 
+		try {
+			statement = conection.createStatement();
+			resultSet = statement.executeQuery("select * from kurier where IDKURIERA=" + idKuriera);
+			resultSet.next();
+			if (!(resultSet.isAfterLast()))
+				podpowiedz = resultSet.getString("podpowiedz");
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			close(resultSet);
+			close(statement);
+		}
+
+		return podpowiedz;
+	}
+
+	// dodaj paczke
+	// dodaj zamowienie - > dziala jak Dorota chciala
+	public int dodajPaczke(PACZKA paczka) {
 		// wywo³anie procedury
 		CallableStatement callableStatement = null;
 		try {
 			// 1 -> idMagazynu
-			// 1 -> idPunktu
-			// 1 -> idKuriera
+			// 3 -> idPunktu
+			// 2 -> idKuriera
 			// data dostarczenia
-			Date date1 = new Date();
-			/*callableStatement = conection.prepareCall("BEGIN dodajPaczke(" + 1 + ", " + 1 + ", " + 1 + ", '"
-					+ paczka.getNadawca().getImie() + "' , '" + paczka.getNadawca().getNazwisko() + "', '"
-					+ paczka.getNadawca().getMiasto() + "', '" + paczka.getNadawca().getNrBudynku() + "', '"
-					+ paczka.getNadawca().getkodPocztowy() + "', '" + paczka.getAdresat().getImie() + "', '"
-					+ paczka.getAdresat().getNazwisko() + "', '" + paczka.getAdresat().getMiasto() + "', "
-					+ paczka.getAdresat().getNrBudynku() + ", '" + paczka.getAdresat().getKodPocztowy() + "', '"
-					+ paczka.getStan() + "', " + paczka.getKoszt() + ", " + paczka.getWaga() + ", " + paczka.isEkspres()
-					+ ", " + paczka.isDelikatna() + ", '" + paczka.getDataPrzyjecia() + "', '" + date1 + "', '"
-					+ paczka.getNadawca().getUlica() + "', " + paczka.getNadawca().getNrLokalu() + ", '"
-					+ paczka.getAdresat().getUlica() + "', " + paczka.getAdresat().getNrLokalu() + "); END;");*/
-			callableStatement = conection.prepareCall("BEGIN dodajPaczke(1,1, 1, 'imie','nazwisko', 'miasto', 2, '31-435', 'imie', 'nazwisko', 'miasto',2 , ' 31-435 ', 'do dostarczenia ', 21.1,  31 , 0, 1, '2008-11-11', '2008-11-11','ulica ',  2 , 'ulica ',  2 ); END;");
-		
-			/*
-			 * 	BEGIN 
-			dodajPaczke(1,1, 1, 'imie','nazwisko', 'miasto', 2, '31-435', 'imie', 'nazwisko', 'miasto',
-			2 , ' 31-435 ', 'do dostarczenia ', 21.1,  31 , 0, 1, '2008-11-11', '2008-11-11',
-			'ulica ',  2 , 'ulica ',  2 ); 
-			END;
-			 */
+			// Date date1 = new Date();
+
+			java.util.Date utilDate2 = paczka.getDataPrzyjecia();
+			java.sql.Date dataPrzyjecia = new java.sql.Date(utilDate2.getTime());
+			// java.util.Date utilDate = new java.util.Date();
+			GregorianCalendar d1 = new GregorianCalendar(utilDate2.getYear(), utilDate2.getMonth(), utilDate2.getDay());
+			d1.add(GregorianCalendar.DAY_OF_YEAR, 1);
+			java.util.Date utilDate = d1.getTime();
+
+			java.sql.Date dataDostarczenia = new java.sql.Date(utilDate.getTime());
+			callableStatement = conection
+					.prepareCall("BEGIN dodajPaczke(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?); END;");
+			callableStatement.setInt(1, 1);
+			callableStatement.setInt(2, 3);
+			callableStatement.setInt(3, 2);
+			callableStatement.setString(4, paczka.getNadawca().getImie());
+			callableStatement.setString(5, paczka.getNadawca().getNazwisko());
+			callableStatement.setString(6, paczka.getNadawca().getMiasto());
+			callableStatement.setInt(7, paczka.getNadawca().getNrBudynku());
+			callableStatement.setString(8, paczka.getNadawca().getkodPocztowy());
+			callableStatement.setString(9, paczka.getAdresat().getImie());
+			callableStatement.setString(10, paczka.getAdresat().getNazwisko());
+			callableStatement.setString(11, paczka.getAdresat().getMiasto());
+			callableStatement.setInt(12, paczka.getAdresat().getNrBudynku());
+			callableStatement.setString(13, paczka.getAdresat().getKodPocztowy());
+			callableStatement.setString(14, paczka.getStan());
+			callableStatement.setFloat(15, paczka.getKoszt());
+			callableStatement.setFloat(16, (float) paczka.getWaga());
+			callableStatement.setBoolean(17, paczka.isEkspres());
+			callableStatement.setBoolean(18, paczka.isDelikatna());
+			callableStatement.setDate(19, dataPrzyjecia);
+			callableStatement.setDate(20, dataDostarczenia);
+			callableStatement.setString(21, paczka.getNadawca().getUlica());
+			callableStatement.setInt(22, paczka.getNadawca().getNrLokalu());
+			callableStatement.setString(23, paczka.getAdresat().getUlica());
+			callableStatement.setInt(24, paczka.getAdresat().getNrLokalu());
+			callableStatement.setString(25, paczka.getRodzaj());
+			callableStatement.execute();
+
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return 0;
@@ -195,16 +283,20 @@ System.out.println("chuj");
 		return 1;
 	}
 
-	// zaloguj
+	// zaloguj - > dziala jak Dorota chciala
 	public boolean czyHasloPoprawne(int idKuriera, String haslo) {
 		Statement statement = null;
 		ResultSet resultSet = null;
 		try {
+			System.out.println(idKuriera);
 			statement = conection.createStatement();
-			resultSet = statement.executeQuery("select * from KURIER where idKuriera='" + idKuriera + "'");
+			resultSet = statement.executeQuery("select * from KURIER where idKuriera=" + idKuriera);
 			resultSet.next();
-
-			if (resultSet.getString(haslo) == haslo)
+			String hasloBaza = "";
+			if (!(resultSet.isAfterLast())) {
+				hasloBaza = resultSet.getString("haslo");
+			}
+			if (hasloBaza.equals(haslo))
 				return true;
 			else
 				return false;
@@ -218,31 +310,35 @@ System.out.println("chuj");
 		}
 	}
 
-	// paczki do odebrania
+	// paczki do odebrania -> dziala jak Dorota chciala
 	public ArrayList<PACZKA> paczkiDoOdebrania() {
 		ArrayList<PACZKA> doOdebrania = new ArrayList<PACZKA>();
-		Statement statement = null;
+		Statement statement_Paczka = null;
+		Statement statement_Odbiorca = null;
+		Statement statement_Nadawca = null;
 		ResultSet resultSet_Paczka = null;
 		ResultSet resultSet_Odbiorca = null;
 		ResultSet resultSet_Nadawca = null;
 		int idO;
 		int idN;
 		try {
-			statement = conection.createStatement();
-
-			resultSet_Paczka = statement.executeQuery("select * from PACZKI where stan= \"Do Odebrania\"");
+			statement_Paczka = conection.createStatement();
+			statement_Odbiorca = conection.createStatement();
+			statement_Nadawca = conection.createStatement();
+			resultSet_Paczka = statement_Paczka.executeQuery("select * from PACZKA where stan= \'Do odebrania\'");
 
 			while (resultSet_Paczka.next()) {
 				idO = resultSet_Paczka.getInt("idOdbiorcy");
 				idN = resultSet_Paczka.getInt("idNadawcy");
-				resultSet_Odbiorca = statement.executeQuery("select * from ODBIORCA where idOdbiorcy='" + idO + "'");
+				resultSet_Odbiorca = statement_Odbiorca.executeQuery("select * from ODBIORCA where idOdbiorcy=" + idO);
 				resultSet_Odbiorca.next();
-				resultSet_Nadawca = statement.executeQuery("select * from ODBIORCA where idNadawcy='" + idN + "'");
+				resultSet_Nadawca = statement_Nadawca.executeQuery("select * from NADAWCA where idNadawcy=" + idN);
 				resultSet_Nadawca.next();
 
 				doOdebrania.add(new PACZKA(resultSet_Paczka.getInt("idPaczki"), resultSet_Paczka.getString("stan"),
 						resultSet_Paczka.getFloat("koszt"), resultSet_Paczka.getDouble("waga"),
-						resultSet_Paczka.getBoolean("szklo"), resultSet_Paczka.getString("rodzaj"),
+						resultSet_Paczka.getBoolean("delikatna"), resultSet_Paczka.getString("rodzaj"),
+						// resultSet_Paczka.getBoolean("delikatna"), "List",
 						resultSet_Paczka.getBoolean("ekspres"), resultSet_Odbiorca.getString("miasto"),
 						resultSet_Odbiorca.getString("ulica"), resultSet_Odbiorca.getInt("nrBudynku"),
 						resultSet_Odbiorca.getInt("nrLokalu"), resultSet_Odbiorca.getString("kodPocztowy"),
@@ -250,7 +346,7 @@ System.out.println("chuj");
 						resultSet_Nadawca.getString("miasto"), resultSet_Nadawca.getString("ulica"),
 						resultSet_Nadawca.getInt("nrBudynku"), resultSet_Nadawca.getInt("nrLokalu"),
 						resultSet_Nadawca.getString("kodPocztowy"), resultSet_Nadawca.getString("imie"),
-						resultSet_Nadawca.getString("nazwisko"), resultSet_Paczka.getDate("data"), idO, idN));
+						resultSet_Nadawca.getString("nazwisko"), resultSet_Paczka.getDate("DATAPRZYJECIA"), idO, idN));
 
 			}
 		} catch (SQLException e) {
@@ -260,46 +356,58 @@ System.out.println("chuj");
 			close(resultSet_Paczka);
 			close(resultSet_Odbiorca);
 			close(resultSet_Nadawca);
-			close(statement);
+			close(statement_Paczka);
+			close(statement_Odbiorca);
+			close(statement_Nadawca);
 		}
-		return null;
+		return doOdebrania;
 
 	}
 
-	// paczki do dostarczenia
+	// paczki do dostarczenia -> dziala jak Dorota chciala
 	public ArrayList<PACZKA> paczkiDoDostarczenia() {
 		ArrayList<PACZKA> doDostarczenia = new ArrayList<PACZKA>();
-		Statement statement = null;
+		Statement statement_Paczka = null;
+		Statement statement_Odbiorca = null;
+		Statement statement_Nadawca = null;
 		ResultSet resultSet_Paczka = null;
 		ResultSet resultSet_Odbiorca = null;
 		ResultSet resultSet_Nadawca = null;
 		int idO;
 		int idN;
 		try {
-			statement = conection.createStatement();
+			statement_Paczka = conection.createStatement();
+			statement_Odbiorca = conection.createStatement();
+			statement_Nadawca = conection.createStatement();
 
-			resultSet_Paczka = statement.executeQuery("select * from PACZKI where stan != \"Do Odebrania\"");
-
+			resultSet_Paczka = statement_Paczka.executeQuery("select * from PACZKA where stan != \'Do odebrania\'");
 			while (resultSet_Paczka.next()) {
 				idO = resultSet_Paczka.getInt("idOdbiorcy");
 				idN = resultSet_Paczka.getInt("idNadawcy");
-				resultSet_Odbiorca = statement.executeQuery("select * from ODBIORCA where idOdbiorcy='" + idO + "'");
-				resultSet_Odbiorca.next();
-				resultSet_Nadawca = statement.executeQuery("select * from ODBIORCA where idNadawcy='" + idN + "'");
-				resultSet_Nadawca.next();
+				System.out.println(idO + " " + idN);
+				if ((idO != 0) && (idN != 0)) {
+					resultSet_Odbiorca = statement_Odbiorca
+							.executeQuery("select * from ODBIORCA where idOdbiorcy=" + idO);
+					resultSet_Odbiorca.next();
+					resultSet_Nadawca = statement_Nadawca.executeQuery("select * from NADAWCA where idNadawcy=" + idN);
+					resultSet_Nadawca.next();
 
-				doDostarczenia.add(new PACZKA(resultSet_Paczka.getInt("idPaczki"), resultSet_Paczka.getString("stan"),
-						resultSet_Paczka.getFloat("koszt"), resultSet_Paczka.getDouble("waga"),
-						resultSet_Paczka.getBoolean("szklo"), resultSet_Paczka.getString("rodzaj"),
-						resultSet_Paczka.getBoolean("ekspres"), resultSet_Odbiorca.getString("miasto"),
-						resultSet_Odbiorca.getString("ulica"), resultSet_Odbiorca.getInt("nrBudynku"),
-						resultSet_Odbiorca.getInt("nrLokalu"), resultSet_Odbiorca.getString("kodPocztowy"),
-						resultSet_Odbiorca.getString("imie"), resultSet_Odbiorca.getString("nazwisko"),
-						resultSet_Nadawca.getString("miasto"), resultSet_Nadawca.getString("ulica"),
-						resultSet_Nadawca.getInt("nrBudynku"), resultSet_Nadawca.getInt("nrLokalu"),
-						resultSet_Nadawca.getString("kodPocztowy"), resultSet_Nadawca.getString("imie"),
-						resultSet_Nadawca.getString("nazwisko"), resultSet_Paczka.getDate("data"), idO, idN));
-
+					doDostarczenia
+							.add(new PACZKA(resultSet_Paczka.getInt("idPaczki"), resultSet_Paczka.getString("stan"),
+									resultSet_Paczka.getFloat("koszt"), resultSet_Paczka.getDouble("waga"),
+									resultSet_Paczka.getBoolean("delikatna"), resultSet_Paczka.getString("rodzaj"),
+									// resultSet_Paczka.getBoolean("delikatna"),
+									// "List",
+									resultSet_Paczka.getBoolean("ekspres"), resultSet_Odbiorca.getString("miasto"),
+									resultSet_Odbiorca.getString("ulica"), resultSet_Odbiorca.getInt("nrBudynku"),
+									resultSet_Odbiorca.getInt("nrLokalu"), resultSet_Odbiorca.getString("kodPocztowy"),
+									resultSet_Odbiorca.getString("imie"), resultSet_Odbiorca.getString("nazwisko"),
+									resultSet_Nadawca.getString("miasto"), resultSet_Nadawca.getString("ulica"),
+									resultSet_Nadawca.getInt("nrBudynku"), resultSet_Nadawca.getInt("nrLokalu"),
+									resultSet_Nadawca.getString("kodPocztowy"), resultSet_Nadawca.getString("imie"),
+									resultSet_Nadawca.getString("nazwisko"), resultSet_Paczka.getDate("DATAPRZYJECIA"),
+									idO, idN));
+				}
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -308,9 +416,11 @@ System.out.println("chuj");
 			close(resultSet_Paczka);
 			close(resultSet_Odbiorca);
 			close(resultSet_Nadawca);
-			close(statement);
+			close(statement_Paczka);
+			close(statement_Odbiorca);
+			close(statement_Nadawca);
 		}
-		return null;
+		return doDostarczenia;
 
 	}
 

@@ -46,9 +46,13 @@ public class ZalogujKurier {
 	private BufferedReader input = null;
 	private Socket socket = null;
 	private boolean flag = true;
-	private JList list;
+	public static JList list;
 	private ArrayList<PACZKA> doOdebrania;
 	private ArrayList<PACZKA> doDostarczenia;
+	private String[] nazwyDoOdebrania = null;
+	private String[] nazwyDoDostarczenia;
+	private JComboBox comboBox;
+	private JScrollPane scrollPane;
 
 	public ZalogujKurier(String login, Socket socket) {
 		this.login = login;
@@ -84,15 +88,21 @@ public class ZalogujKurier {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
+		if (!(doOdebrania.isEmpty())) {
+			nazwyDoOdebrania = new String[doOdebrania.size()];
 
-		String[] nazwyDoOdebrania = new String[doOdebrania.size()];
-		String[] nazwyDoDostarczenia = new String[doDostarczenia.size()];
-
-		for (int i = 0; i < doOdebrania.size(); i++) {
-			nazwyDoOdebrania[i] = doOdebrania.get(i).getidPaczki() + "";
-			nazwyDoDostarczenia[i] = doDostarczenia.get(i).getidPaczki() + "";
+			for (int i = 0; i < doOdebrania.size(); i++) {
+				nazwyDoOdebrania[i] = doOdebrania.get(i).getidPaczki() + "";
+			}
 		}
+		// System.out.println(nazwyDoOdebrania.length);
+		if (!(doDostarczenia.isEmpty())) {
+			nazwyDoDostarczenia = new String[doDostarczenia.size()];
 
+			for (int i = 0; i < doDostarczenia.size(); i++) {
+				nazwyDoDostarczenia[i] = doDostarczenia.get(i).getidPaczki() + "";
+			}
+		}
 		frame = new JFrame();
 		frame.addFocusListener(new FocusAdapter() {
 			@Override
@@ -118,7 +128,7 @@ public class ZalogujKurier {
 		springLayout.putConstraint(SpringLayout.SOUTH, panel, 349, SpringLayout.NORTH, frame.getContentPane());
 		frame.getContentPane().add(panel);
 
-		JComboBox comboBox = new JComboBox();
+		comboBox = new JComboBox();
 
 		comboBox.setModel(new DefaultComboBoxModel(new String[] { "", "Do odebrania", "Do dostarczenia" }));
 		comboBox.setSelectedIndex(0);
@@ -132,7 +142,10 @@ public class ZalogujKurier {
 						String[] values = nazwyDoOdebrania;
 
 						public int getSize() {
-							return values.length;
+							if (values != null)
+								return values.length;
+							else
+								return 0;
 						}
 
 						public Object getElementAt(int index) {
@@ -159,57 +172,152 @@ public class ZalogujKurier {
 
 		JLabel lblPrzesylka = new JLabel("Przesylki:");
 
-		JScrollPane scrollPane = new JScrollPane();
+		scrollPane = new JScrollPane();
 
 		JTextArea textArea = new JTextArea();
 		textArea.setEditable(false);
 		springLayout.putConstraint(SpringLayout.EAST, textArea, -72, SpringLayout.EAST, frame.getContentPane());
-
-		// textArea.setText(login + " " + haslo.toString());
 		textArea.setText(login + " ");
 		springLayout.putConstraint(SpringLayout.SOUTH, textArea, -291, SpringLayout.NORTH, btnWyloguj);
 		springLayout.putConstraint(SpringLayout.NORTH, textArea, 0, SpringLayout.NORTH, panel);
 		springLayout.putConstraint(SpringLayout.WEST, textArea, 6, SpringLayout.EAST, panel);
+		
+		JLabel lblLogin = new JLabel("Login:");
 		GroupLayout gl_panel = new GroupLayout(panel);
-		gl_panel.setHorizontalGroup(gl_panel.createParallelGroup(Alignment.LEADING)
-				.addGroup(gl_panel.createSequentialGroup().addGroup(gl_panel.createParallelGroup(Alignment.LEADING)
-						.addGroup(gl_panel.createSequentialGroup().addGap(3).addComponent(lblPrzesylka).addGap(18)
-								.addComponent(comboBox, GroupLayout.PREFERRED_SIZE, 105, GroupLayout.PREFERRED_SIZE)
-								.addPreferredGap(ComponentPlacement.RELATED, 166, Short.MAX_VALUE)
-								.addComponent(textArea, GroupLayout.PREFERRED_SIZE, 71, GroupLayout.PREFERRED_SIZE))
-						.addGroup(gl_panel.createSequentialGroup().addContainerGap().addComponent(scrollPane,
-								GroupLayout.DEFAULT_SIZE, 398, Short.MAX_VALUE)))
-						.addGap(0)));
-		gl_panel.setVerticalGroup(gl_panel.createParallelGroup(Alignment.LEADING)
-				.addGroup(gl_panel.createSequentialGroup().addGroup(gl_panel.createParallelGroup(Alignment.LEADING)
-						.addGroup(gl_panel.createSequentialGroup().addContainerGap()
-								.addGroup(gl_panel.createParallelGroup(Alignment.BASELINE)
-										.addComponent(comboBox, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE,
-												GroupLayout.PREFERRED_SIZE)
-										.addComponent(lblPrzesylka)))
-						.addComponent(textArea, GroupLayout.PREFERRED_SIZE, 25, GroupLayout.PREFERRED_SIZE))
-						.addPreferredGap(ComponentPlacement.RELATED)
-						.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 275, Short.MAX_VALUE).addGap(4)));
+		gl_panel.setHorizontalGroup(
+			gl_panel.createParallelGroup(Alignment.LEADING)
+				.addGroup(gl_panel.createSequentialGroup()
+					.addGroup(gl_panel.createParallelGroup(Alignment.LEADING)
+						.addGroup(gl_panel.createSequentialGroup()
+							.addGap(3)
+							.addComponent(lblPrzesylka)
+							.addGap(18)
+							.addComponent(comboBox, GroupLayout.PREFERRED_SIZE, 105, GroupLayout.PREFERRED_SIZE)
+							.addPreferredGap(ComponentPlacement.RELATED, 110, Short.MAX_VALUE)
+							.addComponent(lblLogin)
+							.addPreferredGap(ComponentPlacement.UNRELATED)
+							.addComponent(textArea, GroupLayout.PREFERRED_SIZE, 71, GroupLayout.PREFERRED_SIZE))
+						.addGroup(gl_panel.createSequentialGroup()
+							.addContainerGap()
+							.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 398, Short.MAX_VALUE)))
+					.addGap(0))
+		);
+		gl_panel.setVerticalGroup(
+			gl_panel.createParallelGroup(Alignment.LEADING)
+				.addGroup(gl_panel.createSequentialGroup()
+					.addGroup(gl_panel.createParallelGroup(Alignment.LEADING)
+						.addGroup(gl_panel.createSequentialGroup()
+							.addContainerGap()
+							.addGroup(gl_panel.createParallelGroup(Alignment.BASELINE)
+								.addComponent(comboBox, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+								.addComponent(lblPrzesylka)))
+						.addGroup(gl_panel.createParallelGroup(Alignment.BASELINE)
+							.addComponent(textArea, GroupLayout.PREFERRED_SIZE, 25, GroupLayout.PREFERRED_SIZE)
+							.addComponent(lblLogin)))
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 275, Short.MAX_VALUE)
+					.addGap(4))
+		);
 
 		list = new JList();
 		list.addMouseListener(new MouseAdapter() {
+
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
-				// String message = (String) list.getSelectedValue();
-				// JOptionPane.showMessageDialog(null, message);
-				// frame.setVisible(false);
-				if (comboBox.getSelectedItem().toString().contains("Do odebrania"))
-					new WyswietlaniePaczkiKurier(login, socket, doOdebrania.get(list.getSelectedIndex()));
-				else
-					new WyswietlaniePaczkiKurier(login, socket, doDostarczenia.get(list.getSelectedIndex()));
+				int index = list.getSelectedIndex();
+				odswiezanieListy();
+				if (comboBox.getSelectedItem().toString().contains("Do odebrania")) {
+					if (index != -1 && doOdebrania.get(index) != null) {
+						new WyswietlaniePaczkiKurierDoOdebrania(login, socket, doOdebrania.get(index));
+					}
+				} else if (comboBox.getSelectedItem().toString().contains("Do dostarczenia")) {
+					if (index != -1 && doDostarczenia.get(index) != null) {
+						new WyswietlaniePaczkiKurier(login, socket, doDostarczenia.get(index));
+					}
+				}
 			}
+
 		});
 
 		scrollPane.setViewportView(list);
 		panel.setLayout(gl_panel);
+		
+		JButton btnOdswiez = new JButton("Odswiez");
+
+		springLayout.putConstraint(SpringLayout.NORTH, btnOdswiez, 10, SpringLayout.NORTH, frame.getContentPane());
+		springLayout.putConstraint(SpringLayout.EAST, btnOdswiez, -10, SpringLayout.EAST, frame.getContentPane());
+		frame.getContentPane().add(btnOdswiez);
 
 		btnWyloguj.addActionListener(myAction);
+		btnOdswiez.addActionListener(myAction);
 
+	}
+// MOZNA TEZ DODAC PRZYCISK ODSWIEZ, BEDZIE TO LEPIEJ WYGLADAC
+	private void odswiezanieListy() {
+		output.println("Odswiez");
+		output.flush();
+		try {
+			ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
+			doOdebrania = (ArrayList<PACZKA>) ois.readObject();
+			doDostarczenia = (ArrayList<PACZKA>) ois.readObject();
+			// String paczkaWyswietlanie = doOdebrania.toString();
+		} catch (IOException | ClassNotFoundException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		if (!(doOdebrania.isEmpty())) {
+			nazwyDoOdebrania = new String[doOdebrania.size()];
+
+			for (int i = 0; i < doOdebrania.size(); i++) {
+				nazwyDoOdebrania[i] = doOdebrania.get(i).getidPaczki() + "";
+			}
+		} else {
+			nazwyDoOdebrania = new String[1];
+			nazwyDoOdebrania[0] = "";
+			//scrollPane.setViewportView(l);
+		}
+		if (!(doDostarczenia.isEmpty())) {
+			nazwyDoDostarczenia = new String[doDostarczenia.size()];
+
+			for (int i = 0; i < doDostarczenia.size(); i++) {
+				nazwyDoDostarczenia[i] = doDostarczenia.get(i).getidPaczki() + "";
+			}
+		} else {
+			nazwyDoDostarczenia = new String[1];
+			nazwyDoDostarczenia[0] = "";
+		}
+		if (comboBox.getSelectedItem().toString().contains("Do odebrania")) {
+			list.setModel(new AbstractListModel() {
+
+				String[] values = nazwyDoOdebrania;
+
+				public int getSize() {
+					if (values != null)
+						return values.length;
+					else
+						return 0;
+				}
+
+				public Object getElementAt(int index) {
+					return values[index];
+				}
+			});
+
+		} else {
+			list.setModel(new AbstractListModel() {
+				String[] values = nazwyDoDostarczenia;
+
+				public int getSize() {
+					return values.length;
+				}
+
+				public Object getElementAt(int index) {
+					return values[index];
+				}
+			});
+
+		}
+		scrollPane.setViewportView(list);
 	}
 
 	private void ustawienieInputOutput() {
@@ -229,6 +337,9 @@ public class ZalogujKurier {
 			String co = ((JButton) e.getSource()).getText();
 			ustawienieInputOutput();
 			switch (co) {
+			case "Odswiez":
+				odswiezanieListy();
+				break;
 			case "Wyloguj":
 				int tmp = JOptionPane.showConfirmDialog(null, "Czy na pewno chcesz sie wylogowac?");
 				if (tmp == JOptionPane.YES_OPTION) {

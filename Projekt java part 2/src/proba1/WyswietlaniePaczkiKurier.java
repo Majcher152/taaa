@@ -30,6 +30,8 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowFocusListener;
 import java.awt.event.WindowEvent;
+import java.awt.event.WindowAdapter;
+import javax.swing.JOptionPane;
 
 public class WyswietlaniePaczkiKurier {
 
@@ -38,7 +40,7 @@ public class WyswietlaniePaczkiKurier {
 	private BufferedReader input = null;
 	private PrintWriter output = null;
 	private Socket socket = null;
-	private boolean komunikat= false;
+	private boolean komunikat = false;
 	private boolean powrotDoZalogujkurier = false;
 	private JButton btnNewButton;
 	private JButton btnWDrodzeDo;
@@ -71,6 +73,20 @@ public class WyswietlaniePaczkiKurier {
 		MyActionListener myAction = new MyActionListener();
 
 		frame = new JFrame();
+		frame.addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowClosing(WindowEvent arg0) {
+				//JOptionPane.showMessageDialog(null, "Pierwsza czesc kodu pocztowego to dwie cyfry!");
+
+				// powrotDoZalogujkurier = true;
+				// frame.setVisible(false);
+				int ans = JOptionPane.showConfirmDialog(null, "Czy na pewno chcesz opuscic program?");
+				if (ans == JOptionPane.YES_OPTION) {
+					// Zamkniêcie okna
+					frame.dispose();
+				}
+			}
+		});
 		frame.addWindowFocusListener(new WindowFocusListener() {
 			public void windowGainedFocus(WindowEvent arg0) {
 			}
@@ -114,6 +130,22 @@ public class WyswietlaniePaczkiKurier {
 		btnNewButton_1 = new JButton("W punkcie odbioru");
 		btnNewButton_1.addActionListener(myAction);
 
+		if (paczkaDoWyswietlenia.getStan().equals("Przekazana do nadania")) {
+			btnNewButton.setEnabled(false);
+		} else if (paczkaDoWyswietlenia.getStan().equals("W drodze do miasta adresata")) {
+			btnNewButton.setEnabled(false);
+			btnWDrodzeDo.setEnabled(false);
+		} else if (paczkaDoWyswietlenia.getStan().equals("Przekazana do odebrania")) {
+			btnNewButton.setEnabled(false);
+			btnWDrodzeDo.setEnabled(false);
+			btnPrzekazanaDoOdebrania.setEnabled(false);
+		} else if (paczkaDoWyswietlenia.getStan().equals("W punkcie odbioru")) {
+			btnNewButton.setEnabled(false);
+			btnWDrodzeDo.setEnabled(false);
+			btnPrzekazanaDoOdebrania.setEnabled(false);
+			btnNewButton_1.setEnabled(false);
+
+		}
 		JLabel lblLub = new JLabel("lub");
 		GroupLayout groupLayout = new GroupLayout(frame.getContentPane());
 		groupLayout.setHorizontalGroup(groupLayout.createParallelGroup(Alignment.LEADING)

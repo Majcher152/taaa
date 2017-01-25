@@ -13,6 +13,7 @@ import javax.swing.JFrame;
 import javax.swing.SpringLayout;
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.JTextArea;
 
@@ -111,6 +112,9 @@ public class PrzypomnijHaslo {
 					try {
 						if (input.ready()) {
 							String aaa = input.readLine();
+							if (aaa.equals("")) {
+								JOptionPane.showMessageDialog(null, "Nie ma takiego loginu.");
+							}
 							textField.setText("");
 							textArea.setText(aaa);
 							flag = false;
@@ -122,7 +126,6 @@ public class PrzypomnijHaslo {
 					}
 				}
 
-				
 				break;
 			case "Powrot":
 				mess = "Powrot";
