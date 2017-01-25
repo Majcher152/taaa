@@ -18,11 +18,11 @@ public class PACZKA implements Serializable {
 	private Date dataPrzyjecia;
 	private int idOdbiorcy;
 	private int idNadawcy;
-	//
+	private Date dataDostarczenia;
 	private int idPunktu;
 	private int idKuriera;
 	private int idMagazynu;
-	private Date dataDostarczenia;
+
 
 	public PACZKA(int idPaczki, String stan, float koszt, double waga, boolean delikatna, String rodzaj, boolean ekspres,
 			String miastoA, String UlicaA, int nrDomA, int nrMieA, String kodA, String imieA, String nazwiskoA,
